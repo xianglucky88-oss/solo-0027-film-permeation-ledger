@@ -1,0 +1,123 @@
+{
+  "id": "薄膜丙-留出点互斥",
+  "initial_ml": 10,
+  "area": 2,
+  "max_blank_gap": 25,
+  "threshold": 30,
+  "blanks": [
+    {
+      "id": "零点",
+      "time": 0,
+      "value": 1
+    },
+    {
+      "id": "空白二",
+      "time": 20,
+      "value": 1
+    },
+    {
+      "id": "空白三",
+      "time": 40,
+      "value": 1
+    },
+    {
+      "id": "空白四",
+      "time": 50,
+      "value": 1
+    }
+  ],
+  "samples": [
+    {
+      "id": "取样一",
+      "time": 5,
+      "status": "measured",
+      "value": 1,
+      "removed": 2,
+      "added": 2
+    },
+    {
+      "id": "取样二",
+      "time": 15,
+      "status": "censored",
+      "value": 2.2,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "id": "取样三",
+      "time": 25,
+      "status": "censored",
+      "value": 3.31111,
+      "removed": 1,
+      "added": 1
+    },
+    {
+      "id": "取样四",
+      "time": 35,
+      "status": "censored",
+      "value": 4.16543,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "id": "取样五",
+      "time": 40,
+      "status": "measured",
+      "value": 5.5,
+      "removed": 0,
+      "added": 0
+    },
+    {
+      "id": "取样六",
+      "time": 45,
+      "status": "measured",
+      "value": 4.41543,
+      "removed": 0,
+      "added": 0
+    }
+  ],
+  "review": {
+    "steady_state": {
+      "slope": {
+        "lo": 0.05,
+        "hi": 3
+      },
+      "lag": {
+        "lo": 0,
+        "hi": 40
+      },
+      "min_fit_points": 3,
+      "min_fit_span": 15,
+      "starts": [
+        {
+          "id": "丙起点",
+          "sample": "取样一",
+          "fit": [
+            {
+              "id": "丙拟合二",
+              "sample": "取样二"
+            },
+            {
+              "id": "丙拟合三",
+              "sample": "取样三"
+            },
+            {
+              "id": "丙拟合四",
+              "sample": "取样四"
+            }
+          ],
+          "holdout": [
+            {
+              "id": "丙复核五",
+              "sample": "取样五"
+            },
+            {
+              "id": "丙复核六",
+              "sample": "取样六"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

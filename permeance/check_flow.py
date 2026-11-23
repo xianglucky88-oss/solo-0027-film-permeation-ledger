@@ -36,8 +36,60 @@ def observe(rows, row_id, field, target):
         raise ValueError(f'{row_id}.{field} 为 {actual!r}，应为 {target!r}')
 
 
+def audit_steady(port):
+    """稳态复核：共存、单起点可行、留出互斥无解、缺证、非法方案拒绝。"""
+    expected = {
+        'steady-film-a': 'coexistent',
+        'steady-film-b': 'coexistent',
+        'steady-film-c': 'confirmed_no_solution',
+        'steady-film-d': 'confirmed_no_solution',
+    }
+    for name, overall in expected.items():
+        data = json.loads((ROOT / 'examples' / f'{name}.json').read_text(encoding='utf8'))
+        packet = request(port, 'evaluate', data)[0]
+        steady = packet['outputs']['steady_state']
+        if steady['summary']['overall'] != overall:
+            raise ValueError(f'{name} 总判定 {steady["summary"]["overall"]}，应为 {overall}')
+        # 复核不得改写基础口径
+        for key in ('mass', 'flux', 'crossing', 'increment'):
+            if key not in packet['outputs']:
+                raise ValueError(f'{name} 缺少基础口径 {key}')
+    # 膜丙：两个留出点单独都可解释，联合无解
+    data = json.loads((ROOT / 'examples' / 'steady-film-c.json').read_text(encoding='utf8'))
+    spec = data['review']['steady_state']
+    mass = request(port, 'evaluate', data)[0]['outputs']['mass']
+    for hold in ('取样五', '取样六'):
+        single = json.loads(json.dumps(spec, ensure_ascii=False))
+        single['starts'][0]['holdout'] = [{'id': '单留', 'sample': hold}]
+        probe = dict(data)
+        probe['review'] = dict(steady_state=single)
+        row = request(port, 'evaluate', probe)[0]['outputs']['steady_state']['starts'][0]
+        if row['state'] != 'feasible':
+            raise ValueError(f'膜丙留出点 {hold} 单独应可解释')
+    joint = request(port, 'evaluate', data)[0]['outputs']['steady_state']['starts'][0]
+    if joint['state'] != 'no_solution' or all(c['feasible'] for c in joint['holdout_checks']):
+        raise ValueError('膜丙联合复核应确证无解，并逐点记录失败的留出点')
+    # 膜丁：缺证点保留在拟合记录中，不被悄悄删除
+    film_d = request(port, 'evaluate',
+                     json.loads((ROOT / 'examples' / 'steady-film-d.json').read_text(encoding='utf8')))[0]
+    row_d = film_d['outputs']['steady_state']['starts'][0]
+    if row_d['state'] != 'evidence_incomplete' or '取样三' not in row_d['fit']:
+        raise ValueError('缺证点必须保留且起点判为证据不全')
+    # 非法方案被拒绝，且不落库
+    bad = json.loads((ROOT / 'examples' / 'steady-reject.json').read_text(encoding='utf8'))
+    request(port, 'evaluate', bad, status=400)
+    request(port, 'seal', bad, status=400)
+    # 无 steady_state 的基础包不产生该输出（向后兼容）
+    baseline = request(port, 'evaluate', request(port, 'review-sample')[0])[0]
+    if 'steady_state' in baseline['outputs']:
+        raise ValueError('未启用稳态复核时不应出现该输出')
+
+
 def audit(port, flow):
     review = any(op['id'] == flow and op.get('optional') for op in CONFIG['operations'])
+    if flow == 'steady_state':
+        audit_steady(port)
+        return
     prefix = 'review-' if review else ''
     data = request(port, prefix+'sample')[0]
     alt = request(port, prefix+'alternate')[0]

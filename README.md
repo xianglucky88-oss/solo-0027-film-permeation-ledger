@@ -25,3 +25,12 @@ python3 -m permeance.check_flow export
 ### 扩展复核
 
 使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。
+
+### 稳态通量与滞后复核
+
+在 `review.steady_state` 中由资料管理员预先指定允许起点、斜率/滞后范围、最少拟合点数与时长，以及每个起点的拟合点和独立复核点。服务沿用既有单位面积累计量的证据区间，以半平面裁剪求 `M = J·(t−L)` 的可行参数域：区间不改成中点，缺证点不删除，留出点共用同一组参数。合成档 `steady-film-a`（多起点共存）、`steady-film-b`（单起点可行）、`steady-film-c`（各留出点单独可解释而联合无解）、`steady-film-d`（缺证）与拒绝档 `steady-reject` 可通过下面的命令一次核对：
+
+```sh
+python3 -m permeance.check_flow steady_state
+python3 permeance/test_steady_state.py
+```

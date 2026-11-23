@@ -190,6 +190,21 @@
         "evidence"
       ],
       "optional": true
+    },
+    {
+      "id": "steady_state",
+      "label": "稳态通量与滞后复核",
+      "columns": [
+        "id",
+        "time",
+        "slope_lo",
+        "slope_hi",
+        "lag_lo",
+        "lag_hi",
+        "state",
+        "reason"
+      ],
+      "optional": true
     }
   ],
   "values": {
@@ -233,7 +248,13 @@
     "unbalanced": "双端峰数不对称",
     "cycle": "完整循环",
     "sequence": "序列未闭合",
-    "marked": "有标记"
+    "marked": "有标记",
+    "feasible": "留出后仍可行",
+    "no_solution": "确证无解",
+    "evidence_incomplete": "证据不全",
+    "coexistent": "多起点可共存",
+    "incompatible_lags": "滞后互不相容",
+    "confirmed_no_solution": "确证无解"
   },
   "columns": {
     "added": "补液体积",
@@ -259,6 +280,11 @@
     "relative": "相对音分差",
     "rate_lo": "通量下界",
     "rate_hi": "通量上界",
+    "slope_lo": "稳态通量下界",
+    "slope_hi": "稳态通量上界",
+    "lag_lo": "滞后下界",
+    "lag_hi": "滞后上界",
+    "reason": "判定依据",
     "area": "面积",
     "total": "理论总量",
     "kept": "保留宽度",

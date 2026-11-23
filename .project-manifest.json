@@ -91,6 +91,11 @@
       "id": "version_panel",
       "path": "web/version-panel.js",
       "responsibility": "封存选择、版本读取、比对和下载"
+    },
+    {
+      "id": "steady_state",
+      "path": "permeance/steady_state.py",
+      "responsibility": "稳态通量与滞后的证据区间可行性复核"
     }
   ],
   "workflows": [
@@ -499,6 +504,30 @@
         "artifacts",
         "result_table",
         "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "steady_state",
+      "name": "稳态通量与滞后复核",
+      "entry": "POST /permeance/api/evaluate → outputs.steady_state",
+      "steps": [
+        "资料管理员预先指定允许起点、斜率/滞后范围、最少拟合点数与时长及拟合/独立复核点",
+        "在 (J,b) 平面用半平面裁剪求 M=J·(t−L) 的凸可行域，区间不转中点、缺证点不删除",
+        "用同一组参数裁剪留出点，逐点记录是否仍落入证据区间，随增强包封存并供历史回读"
+      ],
+      "success": "多起点共存、单起点可行、留出互斥无解与缺证各档判定契合固定观测",
+      "failure": "复核方案引用非法、范围倒置或点序违例时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow steady_state",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "steady_state",
+        "artifacts",
+        "result_table",
         "mass_ledger"
       ]
     }

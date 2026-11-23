@@ -66,7 +66,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if action == 'config':
             self.response(canonical(CONFIG))
-        elif action in ('sample', 'alternate', 'review-sample', 'review-alternate'):
+        elif action in ('sample', 'alternate', 'review-sample', 'review-alternate',
+                        'steady-film-a', 'steady-film-b', 'steady-film-c', 'steady-film-d'):
             self.response((ROOT / 'examples' / (action + '.json')).read_bytes())
         elif action == 'revisions':
             self.response(canonical(wb.archive.list()))
