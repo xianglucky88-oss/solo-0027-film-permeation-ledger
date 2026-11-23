@@ -83,6 +83,11 @@
       "responsibility": "相邻点通量界限与阈值判定"
     },
     {
+      "id": "thermal",
+      "path": "permeance/thermal.py",
+      "responsibility": "温度程序段归约、越界度分钟面积账与逐段判定"
+    },
+    {
       "id": "result_table",
       "path": "web/result-table.js",
       "responsibility": "结果表及结构化证据明细"
@@ -500,6 +505,27 @@
         "result_table",
         "blank_correction",
         "mass_ledger"
+      ]
+    },
+    {
+      "id": "thermal",
+      "name": "温度程序核对",
+      "entry": "POST /permeance/api/evaluate → outputs.thermal",
+      "steps": [
+        "仅在有证相邻温度样点间线性插值，越界面积按实际交点切开，冷热两侧分别累计互不冲销",
+        "已证面积超预算判该段不符，面积未超限但有缺口判证据不足，全段有证且两侧未超限才判程序符合",
+        "把归约值、状态和来源明细写入 outputs.thermal，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow thermal",
+      "module_ids": [
+        "server",
+        "service",
+        "review",
+        "thermal",
+        "artifacts",
+        "result_table"
       ]
     }
   ],

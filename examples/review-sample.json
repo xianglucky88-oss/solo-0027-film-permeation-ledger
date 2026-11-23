@@ -82,6 +82,104 @@
         "observed_ml": 8,
         "tolerance_ml": 0.1
       }
-    ]
+    ],
+    "thermal": {
+      "max_gap": 10,
+      "segments": [
+        {
+          "id": "升温段",
+          "kind": "heat",
+          "start": 0,
+          "end": 20,
+          "lo_start": 20,
+          "lo_end": 38,
+          "hi_start": 24,
+          "hi_end": 42,
+          "cold_budget": 25,
+          "hot_budget": 5
+        },
+        {
+          "id": "保温段",
+          "kind": "hold",
+          "start": 20,
+          "end": 80,
+          "lo_start": 38,
+          "lo_end": 38,
+          "hi_start": 42,
+          "hi_end": 42,
+          "cold_budget": 20,
+          "hot_budget": 5
+        },
+        {
+          "id": "降温段",
+          "kind": "cool",
+          "start": 80,
+          "end": 100,
+          "lo_start": 38,
+          "lo_end": 20,
+          "hi_start": 42,
+          "hi_end": 24,
+          "cold_budget": 25,
+          "hot_budget": 5
+        }
+      ],
+      "readings": [
+        {
+          "id": "温一",
+          "time": 0,
+          "value": 22
+        },
+        {
+          "id": "温二",
+          "time": 10,
+          "value": 30
+        },
+        {
+          "id": "温三",
+          "time": 20,
+          "value": 40
+        },
+        {
+          "id": "温四",
+          "time": 30,
+          "value": 36
+        },
+        {
+          "id": "温五",
+          "time": 40,
+          "value": 40
+        },
+        {
+          "id": "温六",
+          "time": 50,
+          "value": 44
+        },
+        {
+          "id": "温七",
+          "time": 60,
+          "value": 40
+        },
+        {
+          "id": "温八",
+          "time": 70,
+          "value": 40
+        },
+        {
+          "id": "温九",
+          "time": 80,
+          "value": 40
+        },
+        {
+          "id": "温十",
+          "time": 90,
+          "value": 30
+        },
+        {
+          "id": "温十一",
+          "time": 100,
+          "value": 22
+        }
+      ]
+    }
   }
 }

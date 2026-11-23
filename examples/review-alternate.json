@@ -83,6 +83,67 @@
         "observed_ml": 8.5,
         "tolerance_ml": 0.1
       }
-    ]
+    ],
+    "thermal": {
+      "max_gap": 10,
+      "segments": [
+        {
+          "id": "升温段",
+          "kind": "heat",
+          "start": 0,
+          "end": 30,
+          "lo_start": 20,
+          "lo_end": 40,
+          "hi_start": 24,
+          "hi_end": 44,
+          "cold_budget": 10,
+          "hot_budget": 10
+        },
+        {
+          "id": "保温段",
+          "kind": "hold",
+          "start": 30,
+          "end": 60,
+          "lo_start": 40,
+          "lo_end": 40,
+          "hi_start": 44,
+          "hi_end": 44,
+          "cold_budget": 10,
+          "hot_budget": 10
+        }
+      ],
+      "readings": [
+        {
+          "id": "温一",
+          "time": 0,
+          "value": 22
+        },
+        {
+          "id": "温二",
+          "time": 10,
+          "value": 28
+        },
+        {
+          "id": "温三",
+          "time": 20,
+          "value": 34
+        },
+        {
+          "id": "温四",
+          "time": 40,
+          "value": 42
+        },
+        {
+          "id": "温五",
+          "time": 50,
+          "value": 42
+        },
+        {
+          "id": "温六",
+          "time": 60,
+          "value": 41
+        }
+      ]
+    }
   }
 }

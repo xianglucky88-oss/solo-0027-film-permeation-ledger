@@ -54,5 +54,13 @@
     "取样四",
     null,
     null
+  ],
+  "thermal": [
+    "保温段",
+    "state",
+    "exceeded",
+    "整个程序",
+    "state",
+    "lacking"
   ]
 }

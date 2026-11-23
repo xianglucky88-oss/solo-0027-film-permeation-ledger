@@ -15,7 +15,19 @@ function viewValue(value, model) {
 }
 
 function traceTree(value, model) {
-  if (value && typeof value === 'object' && !Array.isArray(value)) {
+  if (Array.isArray(value)) {
+    if (!value.some((item) => item !== null && typeof item === 'object')) {
+      return el('span', viewValue(value, model));
+    }
+    const list = el('ol');
+    for (const item of value) {
+      const entry = el('li');
+      entry.append(traceTree(item, model));
+      list.append(entry);
+    }
+    return list;
+  }
+  if (value && typeof value === 'object') {
     const list = el('dl');
     for (const [k, v] of Object.entries(value)) {
       list.append(el('dt', model.columns[k] || k), el('dd'));

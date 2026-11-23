@@ -24,4 +24,4 @@ python3 -m permeance.check_flow export
 
 ### 扩展复核
 
-使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。
+使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。温度程序核对运行 `python3 -m permeance.check_flow thermal`：样例为整段平均恰好达标但热侧度分钟超限，对照为两段程序边界贴着缺测、只能判证据不足。

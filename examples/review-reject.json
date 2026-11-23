@@ -69,6 +69,47 @@
         "first": "取样一",
         "last": "取样一"
       }
-    ]
+    ],
+    "thermal": {
+      "max_gap": 10,
+      "segments": [
+        {
+          "id": "升温段",
+          "kind": "heat",
+          "start": 0,
+          "end": 30,
+          "lo_start": 20,
+          "lo_end": 40,
+          "hi_start": 24,
+          "hi_end": 44,
+          "cold_budget": 10,
+          "hot_budget": 10
+        },
+        {
+          "id": "保温段",
+          "kind": "hold",
+          "start": 20,
+          "end": 60,
+          "lo_start": 40,
+          "lo_end": 40,
+          "hi_start": 44,
+          "hi_end": 44,
+          "cold_budget": 10,
+          "hot_budget": 10
+        }
+      ],
+      "readings": [
+        {
+          "id": "温一",
+          "time": 0,
+          "value": 22
+        },
+        {
+          "id": "温二",
+          "time": 10,
+          "value": 28
+        }
+      ]
+    }
   }
 }

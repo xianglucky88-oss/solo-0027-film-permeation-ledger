@@ -190,6 +190,21 @@
         "evidence"
       ],
       "optional": true
+    },
+    {
+      "id": "thermal",
+      "label": "温度程序核对",
+      "columns": [
+        "id",
+        "kind",
+        "start",
+        "end",
+        "cold_area",
+        "hot_area",
+        "state",
+        "evidence"
+      ],
+      "optional": true
     }
   ],
   "values": {
@@ -233,7 +248,15 @@
     "unbalanced": "双端峰数不对称",
     "cycle": "完整循环",
     "sequence": "序列未闭合",
-    "marked": "有标记"
+    "marked": "有标记",
+    "heat": "升温",
+    "hold": "保温",
+    "cool": "降温",
+    "cold": "冷侧",
+    "hot": "热侧",
+    "exceeded": "偏差超限",
+    "lacking": "证据不足",
+    "within": "两侧达标"
   },
   "columns": {
     "added": "补液体积",
@@ -280,7 +303,17 @@
     "mixed": "双因禁保长度",
     "eligible": "可保长度",
     "blocked": "重大疵点长度",
-    "blind": "缺检长度"
+    "blind": "缺检长度",
+    "kind": "段型",
+    "cold_area": "冷侧度分钟",
+    "hot_area": "热侧度分钟",
+    "cold_budget": "冷侧预算",
+    "hot_budget": "热侧预算",
+    "violations": "已证越界区间",
+    "gaps": "缺测区间",
+    "points": "原样点",
+    "side": "侧别",
+    "segments": "各段判定"
   },
   "reconciliation": "increment",
   "defaultOperation": "mass"
