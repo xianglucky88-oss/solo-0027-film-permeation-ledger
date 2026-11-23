@@ -1,0 +1,69 @@
+{
+  "liquid": [
+    "取样二",
+    "after",
+    9,
+    "取样四",
+    "after",
+    8
+  ],
+  "blank": [
+    "取样一",
+    "evidence",
+    [
+      "零点",
+      "空白二"
+    ],
+    "取样五",
+    "value",
+    1
+  ],
+  "bounds": [
+    "取样二",
+    "hi",
+    2,
+    "取样四",
+    "state",
+    "measured"
+  ],
+  "mass": [
+    "取样三",
+    "lo",
+    19,
+    "取样五",
+    "state",
+    "bounded"
+  ],
+  "flux": [
+    "取样一/取样二",
+    "lo",
+    -0.4,
+    "取样四/取样五",
+    "state",
+    "bounded"
+  ],
+  "crossing": [
+    "取样二",
+    "state",
+    "possible",
+    "取样五",
+    "state",
+    "verified"
+  ],
+  "revisit": [
+    "取样五",
+    "state",
+    "unresolved",
+    "取样五",
+    null,
+    null
+  ],
+  "increment": [
+    "取样四/取样五",
+    "state",
+    "blind",
+    "取样四/取样五",
+    "lo",
+    1.6
+  ]
+}

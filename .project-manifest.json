@@ -1,0 +1,519 @@
+{
+  "project_name": "solo-0027-film-permeation-ledger",
+  "project_shape": "fullstack",
+  "modules": [
+    {
+      "id": "contract",
+      "path": "permeance/contract.py",
+      "responsibility": "JSON 与领域字段边界"
+    },
+    {
+      "id": "domain",
+      "path": "permeance/domain.py",
+      "responsibility": "解析领域单位与归约事实"
+    },
+    {
+      "id": "rules",
+      "path": "permeance/rules.py",
+      "responsibility": "消费归约证据和约束，产生业务判定"
+    },
+    {
+      "id": "artifacts",
+      "path": "permeance/artifacts.py",
+      "responsibility": "成果规范编码、摘要与差分"
+    },
+    {
+      "id": "archive",
+      "path": "permeance/archive.py",
+      "responsibility": "SQLite 历史版本与原子封存"
+    },
+    {
+      "id": "service",
+      "path": "permeance/service.py",
+      "responsibility": "串联归约、比对和历史读取"
+    },
+    {
+      "id": "server",
+      "path": "permeance/server.py",
+      "responsibility": "本机 HTTP 及静态界面入口"
+    },
+    {
+      "id": "workbench",
+      "path": "web/ui.js",
+      "responsibility": "页面状态、样例归约、视图切换与图形编排"
+    },
+    {
+      "id": "reconcile",
+      "path": "permeance/reconcile.py",
+      "responsibility": "联合原始归约事实与业务判定，推导区段净增量"
+    },
+    {
+      "id": "windows",
+      "path": "permeance/windows.py",
+      "responsibility": "复核证据归约"
+    },
+    {
+      "id": "review",
+      "path": "permeance/review.py",
+      "responsibility": "编排按领域事实驱动的可选复核"
+    },
+    {
+      "id": "evidence",
+      "path": "permeance/evidence.py",
+      "responsibility": "复核证据归约"
+    },
+    {
+      "id": "volume_check",
+      "path": "permeance/volume_check.py",
+      "responsibility": "复核证据归约"
+    },
+    {
+      "id": "blank_correction",
+      "path": "permeance/blank_correction.py",
+      "responsibility": "空白时序插值、删失边界和证据"
+    },
+    {
+      "id": "mass_ledger",
+      "path": "permeance/mass_ledger.py",
+      "responsibility": "受液质量和历次取样带出量的累计账"
+    },
+    {
+      "id": "mass_assessment",
+      "path": "permeance/mass_assessment.py",
+      "responsibility": "相邻点通量界限与阈值判定"
+    },
+    {
+      "id": "result_table",
+      "path": "web/result-table.js",
+      "responsibility": "结果表及结构化证据明细"
+    },
+    {
+      "id": "version_panel",
+      "path": "web/version-panel.js",
+      "responsibility": "封存选择、版本读取、比对和下载"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "liquid",
+      "name": "受液核量",
+      "entry": "POST /permeance/api/evaluate 的 outputs.liquid",
+      "steps": [
+        "逐步记录每次取样前后液量",
+        "取样二 的 处理后 为 9"
+      ],
+      "success": "取样二 的 处理后 为 9",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow liquid",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table"
+      ]
+    },
+    {
+      "id": "blank",
+      "name": "空白校正",
+      "entry": "POST /permeance/api/evaluate 的 outputs.blank",
+      "steps": [
+        "局部空白缺失不能当作数值零",
+        "取样一 的 来源证据 为 [\"零点\", \"空白二\"]"
+      ],
+      "success": "取样一 的 来源证据 为 [\"零点\", \"空白二\"]",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow blank",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "bounds",
+      "name": "浓度区间",
+      "entry": "POST /permeance/api/evaluate 的 outputs.bounds",
+      "steps": [
+        "低限不能当作零或直接删掉",
+        "取样二 的 上界 为 2"
+      ],
+      "success": "取样二 的 上界 为 2",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow bounds",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "mass",
+      "name": "透过质量",
+      "entry": "POST /permeance/api/evaluate 的 outputs.mass",
+      "steps": [
+        "累积量含前序实际抽出的质量",
+        "取样三 的 下界 为 19"
+      ],
+      "success": "取样三 的 下界 为 19",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow mass",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "flux",
+      "name": "区段通量",
+      "entry": "POST /permeance/api/evaluate 的 outputs.flux",
+      "steps": [
+        "至少两个同一试片的可量化端点",
+        "取样一/取样二 的 下界 为 -0.4"
+      ],
+      "success": "取样一/取样二 的 下界 为 -0.4",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow flux",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger",
+        "mass_assessment"
+      ]
+    },
+    {
+      "id": "crossing",
+      "name": "阈值穿越",
+      "entry": "POST /permeance/api/evaluate 的 outputs.crossing",
+      "steps": [
+        "仅依赖可信上下界分别给确定与可能",
+        "取样二 的 状态 为 \"possible\""
+      ],
+      "success": "取样二 的 状态 为 \"possible\"",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow crossing",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger",
+        "mass_assessment"
+      ]
+    },
+    {
+      "id": "revisit",
+      "name": "队列复测",
+      "entry": "POST /permeance/api/evaluate 的 outputs.revisit",
+      "steps": [
+        "缺测影响传播到后续质量值",
+        "取样五 的 状态 为 \"unresolved\""
+      ],
+      "success": "取样五 的 状态 为 \"unresolved\"",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow revisit",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "increment",
+      "name": "区段净增量",
+      "entry": "POST /permeance/api/evaluate 的 outputs.increment",
+      "steps": [
+        "相邻两次取样共有的更早抽取量可抵消；先扣除早一笔取样移走的体积，再用各自的净浓度界限求单位面积单位时间的增量。",
+        "取样四/取样五 的 状态 为 \"blind\""
+      ],
+      "success": "取样四/取样五 的 状态 为 \"blind\"",
+      "failure": "非法领域数据返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow increment",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "reconcile",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "compare",
+      "name": "平行版本差分",
+      "entry": "POST /permeance/api/compare",
+      "steps": [
+        "保留试片身份及有限区间差",
+        "异版产生差异，同版无差异，跨对象拒绝"
+      ],
+      "success": "异版产生差异，同版无差异，跨对象拒绝",
+      "failure": "跨对象比对返回 409",
+      "verification": "python3 -m permeance.check_flow compare",
+      "module_ids": [
+        "server",
+        "service",
+        "archive",
+        "artifacts",
+        "version_panel",
+        "result_table"
+      ]
+    },
+    {
+      "id": "seal",
+      "name": "封存版本",
+      "entry": "POST /permeance/api/seal",
+      "steps": [
+        "保存样本、空白及方法参数",
+        "同输入仅写入一次，旧版不随对照改变"
+      ],
+      "success": "同输入仅写入一次，旧版不随对照改变",
+      "failure": "非法输入不写入",
+      "verification": "python3 -m permeance.check_flow seal",
+      "module_ids": [
+        "server",
+        "service",
+        "archive",
+        "artifacts",
+        "version_panel",
+        "result_table"
+      ]
+    },
+    {
+      "id": "export",
+      "name": "导出交接",
+      "entry": "GET /permeance/api/export/<摘要>",
+      "steps": [
+        "保留原始输入与归约证据",
+        "下载头有效且内容完整保留历史快照"
+      ],
+      "success": "下载头有效且内容完整保留历史快照",
+      "failure": "未知版本返回 404",
+      "verification": "python3 -m permeance.check_flow export",
+      "module_ids": [
+        "server",
+        "service",
+        "archive",
+        "artifacts",
+        "version_panel"
+      ]
+    },
+    {
+      "id": "windows",
+      "name": "任意取样窗净增量",
+      "entry": "POST /permeance/api/evaluate → outputs.windows",
+      "steps": [
+        "消去两个端点共有的早先抽样量，保留窗内非零项及符号界限",
+        "把归约值、状态和来源明细写入 outputs.windows，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow windows",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "windows",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "agreement",
+      "name": "相邻通量口径对照",
+      "entry": "POST /permeance/api/evaluate → outputs.agreement",
+      "steps": [
+        "区分同值、缩窄区间和抵消旧盲区后可量化",
+        "把归约值、状态和来源明细写入 outputs.agreement，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow agreement",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "windows",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger",
+        "mass_assessment"
+      ]
+    },
+    {
+      "id": "draws",
+      "name": "抽样下游影响",
+      "entry": "POST /permeance/api/evaluate → outputs.draws",
+      "steps": [
+        "只有非零抽样才传播至随后累积质量",
+        "把归约值、状态和来源明细写入 outputs.draws，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow draws",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "evidence",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "blank_footprint",
+      "name": "空白复用范围",
+      "entry": "POST /permeance/api/evaluate → outputs.blank_footprint",
+      "steps": [
+        "反查每个空白点进入哪些数据，并分开空白与浓度状态",
+        "把归约值、状态和来源明细写入 outputs.blank_footprint，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow blank_footprint",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "evidence",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "threshold_review",
+      "name": "阈值观察范围",
+      "entry": "POST /permeance/api/evaluate → outputs.threshold_review",
+      "steps": [
+        "分开最早未排除和首次有证据越限，不推定真实越限时刻",
+        "把归约值、状态和来源明细写入 outputs.threshold_review，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow threshold_review",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "evidence",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger",
+        "mass_assessment"
+      ]
+    },
+    {
+      "id": "checkpoints",
+      "name": "独立池量复核",
+      "entry": "POST /permeance/api/evaluate → outputs.checkpoints",
+      "steps": [
+        "独立池量与取样后池量核对，不回填浓度或预测池量",
+        "把归约值、状态和来源明细写入 outputs.checkpoints，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow checkpoints",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "volume_check",
+        "artifacts",
+        "result_table"
+      ]
+    },
+    {
+      "id": "zero_draw_gaps",
+      "name": "缺测传播分类",
+      "entry": "POST /permeance/api/evaluate → outputs.zero_draw_gaps",
+      "steps": [
+        "缺测若没有取液只影响本次快照，有取液才传给以后",
+        "把归约值、状态和来源明细写入 outputs.zero_draw_gaps，随增强包封存并供历史回读"
+      ],
+      "success": "业务样例与对照的值和证据契合固定观测",
+      "failure": "复核输入引用非法或超出边界时返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow zero_draw_gaps",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "rules",
+        "review",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    }
+  ],
+  "complexity": {
+    "mechanisms": [
+      "error_propagation",
+      "capacity",
+      "policy_rules",
+      "lineage",
+      "export_freeze",
+      "versioning_audit",
+      "idempotency",
+      "batch_transaction",
+      "snapshot_consistency"
+    ]
+  }
+}

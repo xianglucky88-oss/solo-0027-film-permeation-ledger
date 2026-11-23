@@ -1,0 +1,86 @@
+{
+  "language": "Python 3.11+ / JavaScript ES modules",
+  "project_shape": "fullstack",
+  "source_extensions": [
+    ".py",
+    ".js",
+    ".css",
+    ".html"
+  ],
+  "build_command": "python3 -m compileall -q permeance && node --input-type=module --check < web/ui.js && node --input-type=module --check < web/chart.js && node --input-type=module --check < web/result-table.js && node --input-type=module --check < web/version-panel.js",
+  "testing": "deferred",
+  "workflow_checks": [
+    {
+      "workflow_id": "liquid",
+      "command": "python3 -m permeance.check_flow liquid"
+    },
+    {
+      "workflow_id": "blank",
+      "command": "python3 -m permeance.check_flow blank"
+    },
+    {
+      "workflow_id": "bounds",
+      "command": "python3 -m permeance.check_flow bounds"
+    },
+    {
+      "workflow_id": "mass",
+      "command": "python3 -m permeance.check_flow mass"
+    },
+    {
+      "workflow_id": "flux",
+      "command": "python3 -m permeance.check_flow flux"
+    },
+    {
+      "workflow_id": "crossing",
+      "command": "python3 -m permeance.check_flow crossing"
+    },
+    {
+      "workflow_id": "revisit",
+      "command": "python3 -m permeance.check_flow revisit"
+    },
+    {
+      "workflow_id": "increment",
+      "command": "python3 -m permeance.check_flow increment"
+    },
+    {
+      "workflow_id": "compare",
+      "command": "python3 -m permeance.check_flow compare"
+    },
+    {
+      "workflow_id": "seal",
+      "command": "python3 -m permeance.check_flow seal"
+    },
+    {
+      "workflow_id": "export",
+      "command": "python3 -m permeance.check_flow export"
+    },
+    {
+      "workflow_id": "windows",
+      "command": "python3 -m permeance.check_flow windows"
+    },
+    {
+      "workflow_id": "agreement",
+      "command": "python3 -m permeance.check_flow agreement"
+    },
+    {
+      "workflow_id": "draws",
+      "command": "python3 -m permeance.check_flow draws"
+    },
+    {
+      "workflow_id": "blank_footprint",
+      "command": "python3 -m permeance.check_flow blank_footprint"
+    },
+    {
+      "workflow_id": "threshold_review",
+      "command": "python3 -m permeance.check_flow threshold_review"
+    },
+    {
+      "workflow_id": "checkpoints",
+      "command": "python3 -m permeance.check_flow checkpoints"
+    },
+    {
+      "workflow_id": "zero_draw_gaps",
+      "command": "python3 -m permeance.check_flow zero_draw_gaps"
+    }
+  ]
+}

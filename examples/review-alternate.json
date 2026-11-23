@@ -1,0 +1,88 @@
+{
+  "id": "阻隔片-丙",
+  "initial_ml": 10,
+  "area": 2,
+  "max_blank_gap": 20,
+  "threshold": 10,
+  "blanks": [
+    {
+      "id": "零点",
+      "time": 0,
+      "value": 1
+    },
+    {
+      "id": "空白二",
+      "time": 20,
+      "value": 1
+    },
+    {
+      "id": "空白三",
+      "time": 40,
+      "value": 1
+    }
+  ],
+  "samples": [
+    {
+      "id": "取样一",
+      "time": 5,
+      "status": "measured",
+      "value": 2,
+      "removed": 2,
+      "added": 2
+    },
+    {
+      "id": "取样二",
+      "time": 15,
+      "status": "censored",
+      "value": 3,
+      "removed": 1,
+      "added": 0
+    },
+    {
+      "id": "取样三",
+      "time": 25,
+      "status": "measured",
+      "value": 5,
+      "removed": 1,
+      "added": 1
+    },
+    {
+      "id": "取样四",
+      "time": 35,
+      "status": "measured",
+      "removed": 1,
+      "added": 0,
+      "value": 6
+    },
+    {
+      "id": "取样五",
+      "time": 40,
+      "status": "measured",
+      "value": 8,
+      "removed": 0,
+      "added": 0
+    }
+  ],
+  "review": {
+    "windows": [
+      {
+        "id": "首尾窗",
+        "first": "取样一",
+        "last": "取样五"
+      },
+      {
+        "id": "前段窗",
+        "first": "取样一",
+        "last": "取样三"
+      }
+    ],
+    "checkpoints": [
+      {
+        "id": "末点独立池量",
+        "sample": "取样五",
+        "observed_ml": 8.5,
+        "tolerance_ml": 0.1
+      }
+    ]
+  }
+}

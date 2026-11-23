@@ -1,0 +1,58 @@
+{
+  "windows": [
+    "前段窗",
+    "lo",
+    14.0,
+    "首尾窗",
+    "lo",
+    28.5
+  ],
+  "agreement": [
+    "取样一/取样二",
+    "state",
+    "same",
+    "取样一/取样二",
+    "state",
+    "same"
+  ],
+  "draws": [
+    "取样四",
+    "state",
+    "blind",
+    "取样四",
+    "lo",
+    5.0
+  ],
+  "blank_footprint": [
+    "空白二",
+    "count",
+    4,
+    "空白二",
+    "count",
+    4
+  ],
+  "threshold_review": [
+    "first-observation",
+    "end",
+    25,
+    "first-observation",
+    "end",
+    25
+  ],
+  "checkpoints": [
+    "末点独立池量",
+    "state",
+    "verified",
+    "末点独立池量",
+    "state",
+    "residual"
+  ],
+  "zero_draw_gaps": [
+    "取样四",
+    "state",
+    "carried",
+    "取样四",
+    null,
+    null
+  ]
+}

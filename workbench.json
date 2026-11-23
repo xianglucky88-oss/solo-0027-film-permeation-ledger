@@ -1,0 +1,287 @@
+{
+  "namespace": "permeance",
+  "title": "薄膜透过质量账",
+  "port": 8864,
+  "theme": "film",
+  "plot": "单位面积透过质量区间",
+  "operations": [
+    {
+      "id": "liquid",
+      "label": "受液核量",
+      "columns": [
+        "id",
+        "time",
+        "before",
+        "after",
+        "removed",
+        "added",
+        "state"
+      ]
+    },
+    {
+      "id": "blank",
+      "label": "空白校正",
+      "columns": [
+        "id",
+        "time",
+        "value",
+        "evidence",
+        "state"
+      ]
+    },
+    {
+      "id": "bounds",
+      "label": "浓度区间",
+      "columns": [
+        "id",
+        "time",
+        "lo",
+        "hi",
+        "state"
+      ]
+    },
+    {
+      "id": "mass",
+      "label": "累积透过",
+      "columns": [
+        "id",
+        "time",
+        "lo",
+        "hi",
+        "state",
+        "evidence"
+      ]
+    },
+    {
+      "id": "flux",
+      "label": "区段通量",
+      "columns": [
+        "id",
+        "start",
+        "end",
+        "lo",
+        "hi",
+        "state"
+      ]
+    },
+    {
+      "id": "crossing",
+      "label": "阈值判读",
+      "columns": [
+        "id",
+        "time",
+        "lo",
+        "hi",
+        "state"
+      ]
+    },
+    {
+      "id": "revisit",
+      "label": "质量盲区",
+      "columns": [
+        "id",
+        "time",
+        "state",
+        "evidence"
+      ]
+    },
+    {
+      "id": "increment",
+      "label": "区段净增量",
+      "columns": [
+        "id",
+        "start",
+        "end",
+        "lo",
+        "hi",
+        "state",
+        "evidence"
+      ]
+    },
+    {
+      "id": "windows",
+      "label": "任意取样窗净增量",
+      "columns": [
+        "id",
+        "start",
+        "end",
+        "lo",
+        "hi",
+        "rate_lo",
+        "rate_hi",
+        "state"
+      ],
+      "optional": true
+    },
+    {
+      "id": "agreement",
+      "label": "相邻通量口径对照",
+      "columns": [
+        "id",
+        "lo",
+        "hi",
+        "prior_lo",
+        "prior_hi",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "draws",
+      "label": "抽样下游影响",
+      "columns": [
+        "id",
+        "removed",
+        "count",
+        "lo",
+        "hi",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "blank_footprint",
+      "label": "空白复用范围",
+      "columns": [
+        "id",
+        "count",
+        "known",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "threshold_review",
+      "label": "阈值观察范围",
+      "columns": [
+        "id",
+        "start",
+        "end",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "checkpoints",
+      "label": "独立池量复核",
+      "columns": [
+        "id",
+        "sample",
+        "time",
+        "modeled",
+        "observed",
+        "residual",
+        "state"
+      ],
+      "optional": true
+    },
+    {
+      "id": "zero_draw_gaps",
+      "label": "缺测传播分类",
+      "columns": [
+        "id",
+        "time",
+        "removed",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    }
+  ],
+  "values": {
+    "blind": "缺少可用数据",
+    "missing": "缺测",
+    "known": "可计算",
+    "verified": "已核实",
+    "restored": "补回原体积",
+    "shifted": "体积有变化",
+    "measured": "定量值",
+    "censored": "低于报告限",
+    "bounded": "仅有区间",
+    "unresolved": "待核实",
+    "negative": "区间全负",
+    "possible": "可能越限",
+    "below": "低于阈值",
+    "added": "新增",
+    "removed": "已移除",
+    "changed": "已变化",
+    "fits": "有产量",
+    "split": "跨带分摊",
+    "kept": "保留",
+    "scrap": "边料",
+    "single": "单通道",
+    "ensemble": "合奏",
+    "silent": "无开管",
+    "supported": "有支撑",
+    "unconfirmed": "未确认",
+    "stable": "稳定",
+    "drift": "偏移不一致",
+    "review": "交接复核",
+    "revisit": "需要复测",
+    "shared": "多处复用",
+    "same": "口径一致",
+    "refined": "区间收窄",
+    "recovered": "恢复量化",
+    "carried": "传播缺测",
+    "local": "局部缺测",
+    "opposed": "方向不符",
+    "sparse": "邻点稀疏",
+    "unbalanced": "双端峰数不对称",
+    "cycle": "完整循环",
+    "sequence": "序列未闭合",
+    "marked": "有标记"
+  },
+  "columns": {
+    "added": "补液体积",
+    "after": "处理后",
+    "before": "处理前",
+    "end": "终点",
+    "evidence": "来源证据",
+    "hi": "上界",
+    "id": "标识",
+    "lo": "下界",
+    "removed": "抽取体积",
+    "stage": "归约阶段",
+    "start": "起点",
+    "state": "状态",
+    "time": "时刻",
+    "value": "读数",
+    "origin": "母卷纵向区间",
+    "sample": "取样编号",
+    "observed": "已观测",
+    "modeled": "模型池量",
+    "assigned": "已归属",
+    "pending": "待核对",
+    "relative": "相对音分差",
+    "rate_lo": "通量下界",
+    "rate_hi": "通量上界",
+    "area": "面积",
+    "total": "理论总量",
+    "kept": "保留宽度",
+    "lost": "边料宽度",
+    "used": "占用长度",
+    "remainder": "余量",
+    "candidates": "候选数",
+    "spread": "最大音分差",
+    "exclusive": "单候选数",
+    "h0": "起水位",
+    "h1": "止水位",
+    "source": "供水记录",
+    "gate": "门位",
+    "prior_lo": "原下界",
+    "prior_hi": "原上界",
+    "known": "已知数",
+    "left_count": "甲端峰数",
+    "right_count": "乙端峰数",
+    "mixed": "双因禁保长度",
+    "eligible": "可保长度",
+    "blocked": "重大疵点长度",
+    "blind": "缺检长度"
+  },
+  "reconciliation": "increment",
+  "defaultOperation": "mass"
+}
