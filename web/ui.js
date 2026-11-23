@@ -22,7 +22,7 @@ function note(text, kind = '') {
   $('status').dataset.kind = kind;
 }
 
-const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button');
+const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button, #dual-stages button');
 
 function renderOperation(next) {
   mode = next;
@@ -40,6 +40,9 @@ function show(next) {
   const review = Object.hasOwn(next.source, 'review');
   $('review-pane').hidden = !review;
   if (!review) $('review-pane').open = false;
+  const dual = Object.hasOwn(next.source, 'dual');
+  $('dual-pane').hidden = !dual;
+  if (!dual) $('dual-pane').open = false;
   renderOperation(Object.hasOwn(next.outputs, mode) ? mode : model.defaultOperation);
 }
 
@@ -72,9 +75,13 @@ async function choose(path) {
   show(next);
   if (path === 'review-sample') {
     $('review-pane').open = true;
-    renderOperation(model.operations.find((op) => op.optional).id);
+    renderOperation(model.operations.find((op) => op.optional && !op.id.startsWith('dual_')).id);
   }
-  note(({ sample:'样例已处理', alternate:'对照样例已处理', 'review-sample':'复核样例已处理' })[path]);
+  if (path === 'dual-sample') {
+    $('dual-pane').open = true;
+    renderOperation(model.operations.find((op) => op.id.startsWith('dual_')).id);
+  }
+  note(({ sample:'样例已处理', alternate:'对照样例已处理', 'review-sample':'复核样例已处理', 'dual-sample':'双池样例已处理' })[path]);
 }
 
 function bind(id, action, event = 'click') {
@@ -89,10 +96,13 @@ guarded(async () => {
     button.textContent = spec.label;
     button.dataset.mode = spec.id;
     button.addEventListener('click', () => packet && renderOperation(spec.id));
-    $(spec.optional ? 'review-stages' : 'stages').append(button);
+    if (!spec.optional) $('stages').append(button);
+    else if (spec.id.startsWith('dual_')) $('dual-stages').append(button);
+    else $('review-stages').append(button);
   }
   bind('sample', () => choose('sample'));
   bind('review-sample', () => choose('review-sample'));
+  bind('dual-sample', () => choose('dual-sample'));
   bind('alternate', () => choose('alternate'));
   bind('evaluate', async () => {
     show(await request('evaluate', source()));

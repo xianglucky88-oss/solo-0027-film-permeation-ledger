@@ -25,3 +25,7 @@ python3 -m permeance.check_flow export
 ### 扩展复核
 
 使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。
+
+### 双池对账
+
+使用「双池样例」，随后在「双池对账」切换跨池转移单、两侧透过推算、成对检查点系统总账与区间对账。供液池、受液池各自保留体积、空白、浓度及取补液记录；登记的跨池转移单必须指向同一时刻两侧各自的操作前取样，同一笔量在两侧只记一次。有效输入见 `examples/dual-sample.json` 与 `examples/dual-alternate.json`，非法输入见 `examples/dual-reject.json`。运行 `python3 -m permeance.check_flow dual_checkpoint` 可核对扣除直接转移后的透过量、单侧失证而系统守恒仍可判定，以及旧试验口径不变。

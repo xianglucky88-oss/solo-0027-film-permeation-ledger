@@ -73,6 +73,11 @@
       "responsibility": "空白时序插值、删失边界和证据"
     },
     {
+      "id": "dual",
+      "path": "permeance/dual.py",
+      "responsibility": "双池跨池转移单、成对检查点与守恒对账"
+    },
+    {
       "id": "mass_ledger",
       "path": "permeance/mass_ledger.py",
       "responsibility": "受液质量和历次取样带出量的累计账"
@@ -500,6 +505,111 @@
         "result_table",
         "blank_correction",
         "mass_ledger"
+      ]
+    },
+    {
+      "id": "dual_transfer",
+      "name": "跨池转移单",
+      "entry": "POST /permeance/api/evaluate → outputs.dual_transfer",
+      "steps": [
+        "转移单指向同一时刻方向明确的两侧操作前取样，同一记录只能用一次",
+        "按供液侧操作前空白校正浓度登记同一笔质量，供液扣量、受液同笔登记"
+      ],
+      "success": "样例转移质量为 50；供液浓度缺测时转移状态为 blind",
+      "failure": "时刻不符、记录复用或体积越界返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow dual_transfer",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "dual",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "dual_receiver",
+      "name": "受液侧扣转移透过",
+      "entry": "POST /permeance/api/evaluate → outputs.dual_receiver",
+      "steps": [
+        "受液累计扣除跨池直接转入贡献，转移不按对外取液及零质量补液重复记账",
+        "一次直接转移抬升受液浓度但净透过为零的档，受液侧推算为 0"
+      ],
+      "success": "样例受液侧净透过为 0；转移浓度未测的档随后转为 blind",
+      "failure": "非法双池输入返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow dual_receiver",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "dual",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "dual_donor",
+      "name": "供液侧减少推算透过",
+      "entry": "POST /permeance/api/evaluate → outputs.dual_donor",
+      "steps": [
+        "以首个取样点为基线，由供液减少扣掉跨池转移推算透过膜的质量",
+        "同一笔转移在两侧账上是同一质量，不挑两个独立范围"
+      ],
+      "success": "样例供液侧推算透过为 25；供液浓度缺测时该侧发布被挡住",
+      "failure": "非法双池输入返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow dual_donor",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "dual",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "dual_checkpoint",
+      "name": "成对检查点系统总账",
+      "entry": "POST /permeance/api/evaluate → outputs.dual_checkpoint",
+      "steps": [
+        "两侧同一检查点须有各自操作前实际取样，不用最近读数或插值凑同时有证",
+        "全系统总质量差合并两池证据，内部转移相抵，不因转移质量不明而失证"
+      ],
+      "success": "样例系统总量差为 30；对照档单侧 blind 但系统总账仍 known",
+      "failure": "检查点时刻或引用非法返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow dual_checkpoint",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "dual",
+        "artifacts",
+        "result_table",
+        "blank_correction"
+      ]
+    },
+    {
+      "id": "dual_interval",
+      "name": "双池区间对账",
+      "entry": "POST /permeance/api/evaluate → outputs.dual_interval",
+      "steps": [
+        "给出受液增加推算、供液减少推算与系统总量差；起点操作计入、终点操作不计入",
+        "外来补液不带示踪剂；单侧可被未测转移挡住，系统守恒核对仍可判定"
+      ],
+      "success": "样例受液区间净透过为 0；对照档系统守恒状态仍为 known",
+      "failure": "非法双池输入返回 400；不封存",
+      "verification": "python3 -m permeance.check_flow dual_interval",
+      "module_ids": [
+        "server",
+        "service",
+        "domain",
+        "dual",
+        "artifacts",
+        "result_table",
+        "blank_correction"
       ]
     }
   ],

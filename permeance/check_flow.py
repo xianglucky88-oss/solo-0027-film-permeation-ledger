@@ -37,20 +37,29 @@ def observe(rows, row_id, field, target):
 
 
 def audit(port, flow):
-    review = any(op['id'] == flow and op.get('optional') for op in CONFIG['operations'])
-    prefix = 'review-' if review else ''
+    optional = [op['id'] for op in CONFIG['operations'] if op.get('optional')]
+    if flow in optional:
+        prefix = 'dual-' if flow.startswith('dual_') else 'review-'
+    else:
+        prefix = ''
     data = request(port, prefix+'sample')[0]
     alt = request(port, prefix+'alternate')[0]
     bad = json.loads((ROOT/'examples'/(prefix+'reject.json')).read_text(encoding='utf8'))
     original = request(port,'evaluate',data)[0]
     alternate = request(port,'evaluate',alt)[0]
     request(port,'evaluate',bad,status=400)
-    if review:
+    if prefix:
         request(port, 'seal', bad, status=400)
-        baselines = [request(port, 'evaluate', request(port, name)[0])[0] for name in ('sample', 'alternate')]
+        if prefix == 'dual-':
+            # 双池样例的基础包即去掉 dual 块后的同一输入：旧口径逐字段不变
+            baselines = [request(port, 'evaluate', {k: v for k, v in body.items() if k != 'dual'})[0]
+                         for body in (data, alt)]
+        else:
+            baselines = [request(port, 'evaluate', request(port, name)[0])[0]
+                         for name in ('sample', 'alternate')]
         for baseline, enhanced in zip(baselines, (original, alternate), strict=True):
             if flow in baseline['outputs'] or any(enhanced['outputs'][k] != v for k,v in baseline['outputs'].items()):
-                raise ValueError('复核改变了基础口径')
+                raise ValueError('扩展数据改变了基础口径')
     if flow in original['outputs']:
         cases = json.loads((ROOT/'examples'/(prefix+'observations.json')).read_text(encoding='utf8'))
         row, key, value, alt_row, alt_key, alt_value = cases[flow]

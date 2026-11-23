@@ -1,5 +1,6 @@
 from . import artifacts, domain, reconcile, rules
 from .review import analyze_review
+from .dual import analyze_dual
 from .contract import ContractError, ident, obj
 
 
@@ -18,6 +19,8 @@ class Workbench:
         if 'review' in source:
             review = obj(source['review'], '复核数据')
             outputs.update(analyze_review(review, model, compiled, outputs))
+        if 'dual' in source:
+            outputs.update(analyze_dual(source['dual'], model))
         return artifacts.make_packet(self.config['namespace'], source, outputs)
 
     def execute(self, command, body):

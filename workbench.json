@@ -190,6 +190,84 @@
         "evidence"
       ],
       "optional": true
+    },
+    {
+      "id": "dual_transfer",
+      "label": "跨池转移单",
+      "columns": [
+        "id",
+        "time",
+        "volume_ml",
+        "donor_sample",
+        "receiver_sample",
+        "lo",
+        "hi",
+        "state"
+      ],
+      "optional": true
+    },
+    {
+      "id": "dual_receiver",
+      "label": "受液侧扣转移透过",
+      "columns": [
+        "id",
+        "time",
+        "lo",
+        "hi",
+        "transfer",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "dual_donor",
+      "label": "供液侧减少推算透过",
+      "columns": [
+        "id",
+        "time",
+        "lo",
+        "hi",
+        "transfer",
+        "state",
+        "evidence"
+      ],
+      "optional": true
+    },
+    {
+      "id": "dual_checkpoint",
+      "label": "成对检查点系统总账",
+      "columns": [
+        "id",
+        "time",
+        "donor_sample",
+        "receiver_sample",
+        "lo",
+        "hi",
+        "delta_lo",
+        "delta_hi",
+        "state"
+      ],
+      "optional": true
+    },
+    {
+      "id": "dual_interval",
+      "label": "双池区间对账",
+      "columns": [
+        "id",
+        "start",
+        "end",
+        "receiver_lo",
+        "receiver_hi",
+        "donor_lo",
+        "donor_hi",
+        "system_lo",
+        "system_hi",
+        "receiver_state",
+        "donor_state",
+        "system_state"
+      ],
+      "optional": true
     }
   ],
   "values": {
@@ -229,6 +307,8 @@
     "carried": "传播缺测",
     "local": "局部缺测",
     "opposed": "方向不符",
+    "donor_to_receiver": "供液池转受液池",
+    "dual": "双池对账",
     "sparse": "邻点稀疏",
     "unbalanced": "双端峰数不对称",
     "cycle": "完整循环",
@@ -280,7 +360,22 @@
     "mixed": "双因禁保长度",
     "eligible": "可保长度",
     "blocked": "重大疵点长度",
-    "blind": "缺检长度"
+    "blind": "缺检长度",
+    "volume_ml": "转移体积",
+    "donor_sample": "供液侧取样",
+    "receiver_sample": "受液侧取样",
+    "transfer": "关联转移单",
+    "delta_lo": "总量差下界",
+    "delta_hi": "总量差上界",
+    "receiver_lo": "受液推算下界",
+    "receiver_hi": "受液推算上界",
+    "donor_lo": "供液推算下界",
+    "donor_hi": "供液推算上界",
+    "system_lo": "系统总量差下界",
+    "system_hi": "系统总量差上界",
+    "receiver_state": "受液侧状态",
+    "donor_state": "供液侧状态",
+    "system_state": "系统守恒状态"
   },
   "reconciliation": "increment",
   "defaultOperation": "mass"

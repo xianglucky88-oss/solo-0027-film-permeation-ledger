@@ -1,0 +1,46 @@
+{
+  "id": "阻隔片-丙",
+  "initial_ml": 10,
+  "area": 2,
+  "max_blank_gap": 20,
+  "threshold": 10,
+  "blanks": [
+    { "id": "零点", "time": 0, "value": 1 },
+    { "id": "空白二", "time": 20, "value": 1 }
+  ],
+  "samples": [
+    { "id": "取样一", "time": 5, "status": "measured", "value": 1, "removed": 0, "added": 0 },
+    { "id": "取样二", "time": 15, "status": "measured", "value": 1, "removed": 0, "added": 0 },
+    { "id": "取样三", "time": 20, "status": "measured", "value": 6, "removed": 0, "added": 0 }
+  ],
+  "dual": {
+    "donor": {
+      "initial_ml": 10,
+      "max_blank_gap": 20,
+      "blanks": [
+        { "id": "供液零点", "time": 0, "value": 0 },
+        { "id": "供液空白二", "time": 20, "value": 0 }
+      ],
+      "samples": [
+        { "id": "供液取样一", "time": 5, "status": "measured", "value": 10, "removed": 0, "added": 0 },
+        { "id": "供液取样二", "time": 15, "status": "measured", "value": 10, "removed": 0, "added": 0 },
+        { "id": "供液取样三", "time": 20, "status": "measured", "value": 10, "removed": 1, "added": 0 }
+      ]
+    },
+    "transfers": [
+      {
+        "id": "转移单-15",
+        "direction": "donor_to_receiver",
+        "time": 15,
+        "donor_sample": "供液取样二",
+        "receiver_sample": "取样二",
+        "volume_ml": 5
+      }
+    ],
+    "checkpoints": [
+      { "id": "检查点-5", "donor_sample": "供液取样一", "receiver_sample": "取样一" },
+      { "id": "检查点-15", "donor_sample": "供液取样二", "receiver_sample": "取样二" },
+      { "id": "检查点-20", "donor_sample": "供液取样三", "receiver_sample": "取样三" }
+    ]
+  }
+}

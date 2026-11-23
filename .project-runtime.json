@@ -81,6 +81,26 @@
     {
       "workflow_id": "zero_draw_gaps",
       "command": "python3 -m permeance.check_flow zero_draw_gaps"
+    },
+    {
+      "workflow_id": "dual_transfer",
+      "command": "python3 -m permeance.check_flow dual_transfer"
+    },
+    {
+      "workflow_id": "dual_receiver",
+      "command": "python3 -m permeance.check_flow dual_receiver"
+    },
+    {
+      "workflow_id": "dual_donor",
+      "command": "python3 -m permeance.check_flow dual_donor"
+    },
+    {
+      "workflow_id": "dual_checkpoint",
+      "command": "python3 -m permeance.check_flow dual_checkpoint"
+    },
+    {
+      "workflow_id": "dual_interval",
+      "command": "python3 -m permeance.check_flow dual_interval"
     }
   ]
 }
