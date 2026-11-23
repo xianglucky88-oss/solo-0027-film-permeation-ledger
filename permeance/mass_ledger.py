@@ -1,3 +1,6 @@
+from .blank_correction import merge_gap
+
+
 def accumulate_mass(model, concentration_bounds):
     points=[]
     owed_lo=owed_hi=0
@@ -7,7 +10,7 @@ def accumulate_mass(model, concentration_bounds):
         lo,hi=bounds['lo'],bounds['hi']
         if lo is None or lost:
             low=high=None
-            state='missing' if lo is None else 'unresolved'
+            state=merge_gap((bounds['state'],),'missing') if lo is None else 'unresolved'
         else:
             low=(sample['before']*lo+owed_lo)/model['area']
             high=(sample['before']*hi+owed_hi)/model['area']

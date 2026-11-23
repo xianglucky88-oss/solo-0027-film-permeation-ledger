@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 from math import isclose
 from pathlib import Path
@@ -92,16 +93,44 @@ def audit(port, flow):
         raise ValueError(f'未知工作流：{flow}')
 
 
+def audit_tiers(port):
+    data = json.loads((ROOT/'examples'/'tiers.json').read_text(encoding='utf8'))
+    bad = json.loads((ROOT/'examples'/'tiers-reject.json').read_text(encoding='utf8'))
+    request(port, 'evaluate', bad, status=400)
+    for change in (
+        lambda d: d['samples'][1]['tiers'][0].update(dilution=0),
+        lambda d: d['samples'][1]['tiers'][0].pop('limit'),
+        lambda d: d['samples'][1]['tiers'][1].update(id='原倍档'),
+        lambda d: d['samples'][2]['tiers'][1].update(value=3),
+    ):
+        variant = copy.deepcopy(data)
+        change(variant)
+        request(port, 'evaluate', variant, status=400)
+    out = request(port, 'evaluate', data)[0]
+    base = request(port, 'evaluate', request(port, 'sample')[0])[0]
+    if any('tiers' in row for row in base['outputs']['bounds']):
+        raise ValueError('无多档附件的旧记录不应出现档位明细')
+    detail = {row['id']: row for row in out['outputs']['bounds']}['取样三'].get('tiers', {})
+    if set(detail) != {'原倍档', '倍二档'} or detail['原倍档']['lo'] != 8 or detail['倍二档']['hi'] != 6.2:
+        raise ValueError('档位冲突没有保留各档的可核实区间')
+    cases = json.loads((ROOT/'examples'/'tiers-observations.json').read_text(encoding='utf8'))
+    for flow, row, key, value in cases:
+        observe(out['outputs'][flow], row, key, value)
+
+
 def main():
     parser = argparse.ArgumentParser(description='运行有界的生产工作流检查')
-    parser.add_argument('flow', choices=[op['id'] for op in CONFIG['operations']]+['seal','compare','export'])
+    parser.add_argument('flow', choices=[op['id'] for op in CONFIG['operations']]+['seal','compare','export','tiers'])
     args = parser.parse_args()
     with TemporaryDirectory(prefix=CONFIG['namespace']+'-') as directory:
         with serve(Path(directory)/'observations.sqlite', 0) as server:
             thread = Thread(target=server.serve_forever, daemon=True)
             thread.start()
             try:
-                audit(server.server_port,args.flow)
+                if args.flow == 'tiers':
+                    audit_tiers(server.server_port)
+                else:
+                    audit(server.server_port,args.flow)
             finally:
                 server.shutdown()
                 thread.join()

@@ -1,0 +1,167 @@
+{
+  "id": "阻隔片-丁",
+  "initial_ml": 10,
+  "area": 2,
+  "max_blank_gap": 20,
+  "threshold": 10,
+  "blanks": [
+    {
+      "id": "零点",
+      "time": 0,
+      "value": 1
+    },
+    {
+      "id": "空白二",
+      "time": 20,
+      "value": 1
+    },
+    {
+      "id": "空白三",
+      "time": 40,
+      "value": 1
+    }
+  ],
+  "samples": [
+    {
+      "id": "取样一",
+      "time": 5,
+      "status": "measured",
+      "value": 2,
+      "removed": 2,
+      "added": 2
+    },
+    {
+      "id": "取样二",
+      "time": 15,
+      "removed": 1,
+      "added": 0,
+      "tiers": [
+        {
+          "id": "原倍档",
+          "dilution": 1,
+          "status": "overrange",
+          "limit": 4
+        },
+        {
+          "id": "倍二档",
+          "dilution": 2,
+          "status": "censored",
+          "limit": 3
+        }
+      ]
+    },
+    {
+      "id": "取样三",
+      "time": 25,
+      "removed": 0,
+      "added": 0,
+      "tiers": [
+        {
+          "id": "原倍档",
+          "dilution": 1,
+          "status": "overrange",
+          "limit": 8
+        },
+        {
+          "id": "倍二档",
+          "dilution": 2,
+          "status": "measured",
+          "lo": 2.9,
+          "hi": 3.1
+        }
+      ]
+    },
+    {
+      "id": "取样四",
+      "time": 30,
+      "status": "measured",
+      "value": 6,
+      "removed": 0,
+      "added": 0
+    },
+    {
+      "id": "取样五",
+      "time": 33,
+      "removed": 0,
+      "added": 0,
+      "tiers": [
+        {
+          "id": "倍二档",
+          "dilution": 2,
+          "status": "overrange",
+          "limit": 2
+        },
+        {
+          "id": "复测档",
+          "dilution": 5,
+          "status": "missing"
+        }
+      ]
+    },
+    {
+      "id": "取样六",
+      "time": 35,
+      "removed": 1,
+      "added": 0,
+      "tiers": [
+        {
+          "id": "原倍档",
+          "dilution": 1,
+          "status": "censored",
+          "limit": 2
+        },
+        {
+          "id": "倍二档",
+          "dilution": 2,
+          "status": "overrange",
+          "limit": 2.5
+        }
+      ]
+    },
+    {
+      "id": "取样七",
+      "time": 40,
+      "status": "measured",
+      "value": 8,
+      "removed": 0,
+      "added": 0
+    }
+  ],
+  "review": {
+    "windows": [
+      {
+        "id": "前段窗",
+        "first": "取样一",
+        "last": "取样二"
+      },
+      {
+        "id": "零抽窗",
+        "first": "取样二",
+        "last": "取样四"
+      },
+      {
+        "id": "开放窗",
+        "first": "取样四",
+        "last": "取样五"
+      },
+      {
+        "id": "冲突窗",
+        "first": "取样五",
+        "last": "取样七"
+      },
+      {
+        "id": "末段窗",
+        "first": "取样六",
+        "last": "取样七"
+      }
+    ],
+    "checkpoints": [
+      {
+        "id": "末点独立池量",
+        "sample": "取样七",
+        "observed_ml": 8,
+        "tolerance_ml": 0.1
+      }
+    ]
+  }
+}

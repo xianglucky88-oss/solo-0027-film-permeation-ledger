@@ -1,3 +1,6 @@
+from .blank_correction import GAP_STATES
+
+
 def flux_between(points):
     flux=[]
     for first,last in zip(points,points[1:]):
@@ -15,6 +18,9 @@ def threshold_crossings(points, threshold):
     crossings=[]
     for point in points:
         hi,lo=point['hi'],point['lo']
-        state='blind' if lo is None else 'verified' if lo>=threshold else 'possible' if hi>=threshold else 'below'
+        if lo is None:
+            state=point['state'] if point['state'] in GAP_STATES else 'blind'
+        else:
+            state='verified' if lo>=threshold else 'possible' if hi>=threshold else 'below'
         crossings.append(dict(id=point['id'],time=point['time'],lo=lo,hi=hi,state=state))
     return crossings

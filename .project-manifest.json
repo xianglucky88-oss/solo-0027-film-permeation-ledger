@@ -70,7 +70,7 @@
     {
       "id": "blank_correction",
       "path": "permeance/blank_correction.py",
-      "responsibility": "空白时序插值、删失边界和证据"
+      "responsibility": "空白时序插值、删失边界、多档区间归约和证据"
     },
     {
       "id": "mass_ledger",
@@ -500,6 +500,35 @@
         "result_table",
         "blank_correction",
         "mass_ledger"
+      ]
+    },
+    {
+      "id": "tiers",
+      "name": "多档测量归约",
+      "entry": "POST /permeance/api/evaluate 的 outputs.bounds",
+      "steps": [
+        "每档按稀释倍数还原到未稀释试液的可核实区间，可用档求交后只做一次空白校正",
+        "档间冲突保留为 conflict 而不任选，单侧界记 open 不补零或满量程",
+        "缺口状态沿实际抽液传播：正抽冲突影响后续累计，零抽冲突不污染后账"
+      ],
+      "success": "互补两档得出界限，冲突与缺测在累计、局部窗、阈值和复测中可区分",
+      "failure": "档位与单值并存、限值或稀释倍数非法返回 400；不产生伪造结果",
+      "verification": "python3 -m permeance.check_flow tiers",
+      "module_ids": [
+        "server",
+        "contract",
+        "service",
+        "domain",
+        "rules",
+        "reconcile",
+        "review",
+        "windows",
+        "evidence",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger",
+        "mass_assessment"
       ]
     }
   ],

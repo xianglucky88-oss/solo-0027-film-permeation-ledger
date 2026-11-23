@@ -81,6 +81,10 @@
     {
       "workflow_id": "zero_draw_gaps",
       "command": "python3 -m permeance.check_flow zero_draw_gaps"
+    },
+    {
+      "workflow_id": "tiers",
+      "command": "python3 -m permeance.check_flow tiers"
     }
   ]
 }

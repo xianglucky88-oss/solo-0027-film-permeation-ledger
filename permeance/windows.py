@@ -1,5 +1,6 @@
 from math import fsum, isclose
 
+from .blank_correction import merge_gap
 from .contract import ident, invariant, records
 
 
@@ -26,6 +27,7 @@ def window_delta(model, bounds, windows):
     for key, start, end in windows:
         terms = mass_terms(samples, start, end)
         a, b = samples[start]['time'], samples[end]['time']
+        gaps = [bounds[i]['state'] for i, _ in terms if bounds[i]['lo'] is None]
         holes = [samples[i]['id'] for i, _ in terms if bounds[i]['lo'] is None]
         lo = hi = None
         if not holes:
@@ -33,7 +35,7 @@ def window_delta(model, bounds, windows):
             hi = fsum(weight*bounds[i]['hi' if weight > 0 else 'lo'] for i, weight in terms)/model['area']
         result.append(dict(id=key, start=a, end=b, lo=lo, hi=hi, rate_lo=None if lo is None else lo/(b-a),
                            rate_hi=None if hi is None else hi/(b-a),
-                           state='blind' if holes else 'negative' if hi < 0 else 'bounded' if lo != hi else 'known',
+                           state=merge_gap(gaps, 'blind') if holes else 'negative' if hi < 0 else 'bounded' if lo != hi else 'known',
                            evidence={'weights_ml': {samples[i]['id']: weight for i, weight in terms}, 'missing': holes}))
     return result
 

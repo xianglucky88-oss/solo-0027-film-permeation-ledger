@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from .blank_correction import merge_gap
 from .contract import ident, invariant, records
 
 
@@ -13,7 +14,7 @@ def draw_exposure(model, bounds):
         lo = None if row['lo'] is None else row['lo']*removed
         hi = None if row['hi'] is None else row['hi']*removed
         result.append(dict(id=sample['id'], lo=lo, hi=hi, removed=removed,
-                           count=len(evidence), state='blind' if lo is None else 'bounded' if lo != hi else 'known',
+                           count=len(evidence), state=merge_gap((row['state'],), 'blind') if lo is None else 'bounded' if lo != hi else 'known',
                            evidence={'downstream': evidence, 'blanks': row['evidence']}))
     return result
 
@@ -30,7 +31,7 @@ def blank_footprint(blanks, bounds):
 
 
 def threshold_review(crossings, mass):
-    earliest = next((i for i, r in enumerate(crossings) if r['state'] in ('possible', 'blind', 'verified')), None)
+    earliest = next((i for i, r in enumerate(crossings) if r['state'] != 'below'), None)
     proved = next((i for i, r in enumerate(crossings) if r['state'] == 'verified'), None)
     evidence = {'first_not_excluded': None if earliest is None else crossings[earliest]['id'],
                 'first_verified': None if proved is None else crossings[proved]['id'],

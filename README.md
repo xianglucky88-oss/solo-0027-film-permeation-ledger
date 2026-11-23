@@ -25,3 +25,7 @@ python3 -m permeance.check_flow export
 ### 扩展复核
 
 使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。
+
+### 多档测量
+
+取样点可附 `tiers` 多档测量（独立编号、稀释倍数、状态、读数或限值），每档还原到未稀释试液后求交，交集只做一次空白校正；档间冲突保留为 `conflict`，只剩单侧界记 `open`，不补零或仪器满量程。样例见 `examples/tiers.json`，运行 `python3 -m permeance.check_flow tiers` 核对两档互补成界、正抽冲突传播后续累计、零抽冲突不污染后账及旧记录口径不变。

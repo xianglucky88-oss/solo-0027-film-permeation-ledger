@@ -10,6 +10,8 @@
 
 `examples/sample.json` 是字段及合法取值示例。`alternate.json` 是同一对象的另一有效输入，`reject.json` 是应被阻止的输入。对象在输入顶层以 `id` 标识；归约行使用原始身份或来源组件组合作为标识。缺测映射为 `null` 或待定状态，不当成数值零。接口接受不超过 512 KiB 的 UTF-8 JSON 对象；重复字段、非法数值或域内冲突返回 400。
 
+取样点可附 `tiers` 多档测量：每档有独立编号、稀释倍数、状态及读数或限值（超量程记测量范围上限，低于报告限记报告低限，定量档记读数或可核实数值区间）。每档先在线性浓度口径下乘回未稀释试液，再把可用档的区间求交：低于报告限提供上界，超量程提供下界，缺测不提供约束。档间不相容记 `conflict` 并保留各档区间，不任选结果；只剩单侧界记 `open`，不补成零或仪器满量程。交集只做一次原口径空白校正；同一取样只更新一次池量和累计抽液。累计、局部质量窗、阈值和复测建议以 `conflict`／`open` 区分真正缺测，并沿实际抽液传播：正抽缺口传给以后，零抽缺口只留本次。多档取样不得再列单值状态或读数；无 `tiers` 的旧记录沿用旧口径。`examples/tiers.json` 给出两档互补、正抽冲突与零抽冲突样例。
+
 成果保存数据合同版本、原始包、各阶段输出、输入摘要和整包摘要。SQLite 通过唯一摘要让同一个有效产物只存一次，错误输入不落库；版本比对只允许同一对象和同一合同版本。校验摘要用于本地内容完整性，不是签名。
 
 ## 生产工作流
@@ -24,6 +26,7 @@
 | 阈值穿越 | `POST /permeance/api/evaluate 的 outputs.crossing` | 取样二 的 状态 为 "possible" |
 | 队列复测 | `POST /permeance/api/evaluate 的 outputs.revisit` | 取样五 的 状态 为 "unresolved" |
 | 区段净增量 | `POST /permeance/api/evaluate 的 outputs.increment` | 取样四/取样五 的 状态 为 "blind" |
+| 多档归约 | `POST /permeance/api/evaluate 的 outputs.bounds` | 多档样例 取样三 的 状态 为 "conflict" |
 | 平行版本差分 | `POST /permeance/api/compare` | 异版产生差异，同版无差异，跨对象拒绝 |
 | 封存版本 | `POST /permeance/api/seal` | 同输入仅写入一次，旧版不随对照改变 |
 | 导出交接 | `GET /permeance/api/export/<摘要>` | 下载头有效且内容完整保留历史快照 |

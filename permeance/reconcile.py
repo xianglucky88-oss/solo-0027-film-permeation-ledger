@@ -1,3 +1,6 @@
+from .blank_correction import merge_gap
+
+
 def summarize(model, facts, outputs):
     result = []
     bounds = facts['bounds']
@@ -12,7 +15,7 @@ def summarize(model, facts, outputs):
             hi = (last['before'] * b['hi'] - carry * a['lo']) / scale
         else:
             lo = hi = None
-        state = 'blind' if not known else 'negative' if hi < 0 else 'bounded' if lo != hi else 'known'
+        state = merge_gap((a['state'], b['state']), 'blind') if not known else 'negative' if hi < 0 else 'bounded' if lo != hi else 'known'
         result.append(dict(id=flux['id'],start=flux['start'],end=flux['end'],lo=lo,hi=hi,state=state,
                            evidence={'samples':[a['id'],b['id']], 'blanks':list(dict.fromkeys(a['evidence']+b['evidence']))}))
     return result
