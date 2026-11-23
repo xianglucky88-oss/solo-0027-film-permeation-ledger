@@ -23,6 +23,11 @@ function grid(svg, a, b, unit) {
 }
 
 function render(svg, { source, outputs }) {
+    if (!outputs.mass) {
+      text(svg, 58, 120, '盲样验收结论见下方验收阶段明细');
+      text(svg, 58, 150, `整批结论：${outputs.state ?? '—'}`);
+      return;
+    }
     const points = outputs.mass;
     const [a,b] = range(points.map((p) => p.time));
     const x = scale(a,b,58,668), y = scale(0,Math.max(source.threshold,...points.map((p) => p.hi ?? 0)),190,40);

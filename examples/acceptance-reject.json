@@ -1,0 +1,20 @@
+{
+  "id": "盲验批次-非法",
+  "repeatability_limit": 2,
+  "locked": {
+    "results": [
+      { "code": "D01", "condition": "条件C1", "status": "measured", "value": 10 },
+      { "code": "D02", "condition": "条件C9", "status": "measured", "value": 11 }
+    ]
+  },
+  "unblinding": {
+    "version": "揭盲表-坏",
+    "levels": [
+      { "id": "低浓度档", "reference_lo": 9, "reference_hi": 12, "tolerance": 1, "required_groups": 1 }
+    ],
+    "assignments": [
+      { "code": "D01", "group": "G1", "level": "低浓度档" },
+      { "code": "D02", "group": "G1", "level": "低浓度档" }
+    ]
+  }
+}

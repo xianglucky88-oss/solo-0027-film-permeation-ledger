@@ -12,6 +12,7 @@
     <div><p class="eyebrow">材料透过试验</p><h1>薄膜透过质量账</h1></div>
     <div class="toolbar" aria-label="数据操作">
       <button id="sample">样例</button><button id="alternate">对照样例</button><button id="review-sample">复核样例</button>
+      <button id="acceptance-sample">盲样验收样例</button><button id="acceptance-alternate">验收对照</button>
       <label class="upload-label">导入数据<input id="upload" type="file" accept=".json,application/json" aria-label="导入数据"></label>
       <button id="evaluate">重新处理</button><button id="seal" class="primary">封存成果</button>
     </div>
@@ -27,6 +28,10 @@
       <details id="review-pane" class="review-pane" hidden>
         <summary>扩展复核</summary>
         <nav id="review-stages" class="stage-list" aria-label="扩展复核阶段"></nav>
+      </details>
+      <details id="acceptance-pane" class="review-pane" hidden>
+        <summary>盲样验收</summary>
+        <nav id="acceptance-stages" class="stage-list" aria-label="盲样验收阶段"></nav>
       </details>
       <section class="result-shell" aria-label="结果明细">
         <div class="results-title"><h2 id="table-title">累积透过</h2><span id="row-count"></span></div>

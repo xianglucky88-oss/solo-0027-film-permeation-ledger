@@ -22,7 +22,7 @@ function note(text, kind = '') {
   $('status').dataset.kind = kind;
 }
 
-const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button');
+const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button, #acceptance-stages button');
 
 function renderOperation(next) {
   mode = next;
@@ -40,6 +40,9 @@ function show(next) {
   const review = Object.hasOwn(next.source, 'review');
   $('review-pane').hidden = !review;
   if (!review) $('review-pane').open = false;
+  const acceptance = next.outputs.acceptance_groups !== undefined;
+  $('acceptance-pane').hidden = !acceptance;
+  if (!acceptance) $('acceptance-pane').open = false;
   renderOperation(Object.hasOwn(next.outputs, mode) ? mode : model.defaultOperation);
 }
 
@@ -49,6 +52,10 @@ function source() {
   } catch {
     throw new Error('数据包不是有效的 JSON');
   }
+}
+
+function isAcceptance(data) {
+  return Object.hasOwn(data, 'locked') && Object.hasOwn(data, 'unblinding');
 }
 
 async function guarded(action) {
@@ -67,14 +74,20 @@ async function guarded(action) {
 
 async function choose(path) {
   const data = await request(path);
-  const next = await request('evaluate', data);
+  const route = path.startsWith('acceptance') ? 'acceptance' : 'evaluate';
+  const next = await request(route, data);
   $('source').value = JSON.stringify(data, null, 2);
   show(next);
   if (path === 'review-sample') {
     $('review-pane').open = true;
     renderOperation(model.operations.find((op) => op.optional).id);
   }
-  note(({ sample:'样例已处理', alternate:'对照样例已处理', 'review-sample':'复核样例已处理' })[path]);
+  if (path === 'acceptance-sample') {
+    $('acceptance-pane').open = true;
+    renderOperation('acceptance_levels');
+  }
+  note(({ sample: '样例已处理', alternate: '对照样例已处理', 'review-sample': '复核样例已处理',
+    'acceptance-sample': '盲样验收样例已处理', 'acceptance-alternate': '盲样验收对照已处理' })[path]);
 }
 
 function bind(id, action, event = 'click') {
@@ -89,13 +102,18 @@ guarded(async () => {
     button.textContent = spec.label;
     button.dataset.mode = spec.id;
     button.addEventListener('click', () => packet && renderOperation(spec.id));
-    $(spec.optional ? 'review-stages' : 'stages').append(button);
+    const paneId = spec.id.startsWith('acceptance_') ? 'acceptance-stages'
+      : spec.optional ? 'review-stages' : 'stages';
+    $(paneId).append(button);
   }
   bind('sample', () => choose('sample'));
   bind('review-sample', () => choose('review-sample'));
   bind('alternate', () => choose('alternate'));
+  bind('acceptance-sample', () => choose('acceptance-sample'));
+  bind('acceptance-alternate', () => choose('acceptance-alternate'));
   bind('evaluate', async () => {
-    show(await request('evaluate', source()));
+    const data = source();
+    show(await request(isAcceptance(data) ? 'acceptance' : 'evaluate', data));
     note('已完成数据归约');
   });
   bind('upload', async () => {
@@ -103,12 +121,16 @@ guarded(async () => {
     if (!file) return;
     if (file.size > 512 * 1024) throw new Error('数据包大于 512 KiB');
     $('source-pane').open = true;
-    $('source').value = await file.text();
-    show(await request('evaluate', source()));
+    const text = await file.text();
+    $('source').value = text;
+    const data = JSON.parse(text);
+    show(await request(isAcceptance(data) ? 'acceptance' : 'evaluate', data));
     note('文件已导入并处理');
   }, 'change');
   bind('seal', async () => {
-    const { revision: result, packet: saved } = await versions.seal(source());
+    const data = source();
+    const { revision: result, packet: saved } =
+      await versions.seal(data, isAcceptance(data) ? 'acceptance-seal' : 'seal');
     show(saved);
     await versions.refresh(result.digest);
     note(result.created ? `已封存第 ${result.sequence} 版` : `与第 ${result.sequence} 版相同，未重复入库`);

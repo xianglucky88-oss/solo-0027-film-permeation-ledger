@@ -1,0 +1,45 @@
+{
+  "id": "盲验批次-甲",
+  "repeatability_limit": 2,
+  "locked": {
+    "results": [
+      { "code": "B01", "condition": "条件C1", "status": "measured", "value": 10 },
+      { "code": "B02", "condition": "条件C1", "status": "measured", "value": 11 },
+      { "code": "B03", "condition": "条件C1", "status": "measured", "value": 10.5 },
+      { "code": "B04", "condition": "条件C1", "status": "censored", "value": 9 },
+      { "code": "B05", "condition": "条件C1", "status": "measured", "value": 10.5 },
+      { "code": "B06", "condition": "条件C1", "status": "missing" },
+      { "code": "B07", "condition": "条件C1", "status": "censored", "value": 9.5 },
+      { "code": "B08", "condition": "条件C1", "status": "measured", "value": 11 },
+      { "code": "B14", "condition": "条件C1", "status": "measured", "value": 10.6 },
+      { "code": "B09", "condition": "条件C1", "status": "measured", "value": 50 },
+      { "code": "B10", "condition": "条件C1", "status": "measured", "value": 51.5 },
+      { "code": "B11", "condition": "条件C1", "status": "measured", "value": 58 },
+      { "code": "B12", "condition": "条件C1", "status": "measured", "value": 51 },
+      { "code": "B13", "condition": "条件C1", "status": "measured", "value": 50.5 }
+    ]
+  },
+  "unblinding": {
+    "version": "揭盲表-v1",
+    "levels": [
+      { "id": "低浓度档", "reference_lo": 9, "reference_hi": 12, "tolerance": 1, "required_groups": 2 },
+      { "id": "高浓度档", "reference_lo": 49, "reference_hi": 53, "tolerance": 1, "required_groups": 1 }
+    ],
+    "assignments": [
+      { "code": "B01", "group": "G1", "level": "低浓度档" },
+      { "code": "B02", "group": "G1", "level": "低浓度档" },
+      { "code": "B03", "group": "G1", "level": "低浓度档" },
+      { "code": "B04", "group": "G2", "level": "低浓度档" },
+      { "code": "B05", "group": "G2", "level": "低浓度档" },
+      { "code": "B06", "group": "G2", "level": "低浓度档" },
+      { "code": "B07", "group": "G3", "level": "低浓度档" },
+      { "code": "B08", "group": "G3", "level": "低浓度档" },
+      { "code": "B14", "group": "G3", "level": "低浓度档" },
+      { "code": "B09", "group": "H1", "level": "高浓度档" },
+      { "code": "B10", "group": "H1", "level": "高浓度档" },
+      { "code": "B11", "group": "H2", "level": "高浓度档" },
+      { "code": "B12", "group": "H2", "level": "高浓度档" },
+      { "code": "B13", "group": "H2", "level": "高浓度档" }
+    ]
+  }
+}

@@ -83,6 +83,11 @@
       "responsibility": "相邻点通量界限与阈值判定"
     },
     {
+      "id": "acceptance",
+      "path": "permeance/acceptance.py",
+      "responsibility": "盲样揭盲后按同源组核对重复性与参照区间的三态判定"
+    },
+    {
       "id": "result_table",
       "path": "web/result-table.js",
       "responsibility": "结果表及结构化证据明细"
@@ -500,6 +505,30 @@
         "result_table",
         "blank_correction",
         "mass_ledger"
+      ]
+    },
+    {
+      "id": "acceptance",
+      "name": "盲样验收",
+      "entry": "POST /permeance/api/acceptance 与 /permeance/api/acceptance-seal",
+      "steps": [
+        "锁定结果按盲码登记，每码至多一条冻结结果；揭盲表到验收时提供同源组、浓度档与参照区间",
+        "同源重复读数只算一个独立组，换检测条件不得与旧结果拼组",
+        "重复性按组内最大两两绝对差，参照核对按每条读数至参照区间距离，各分全合格/全不合格/部分三态",
+        "联合结论按同一组真值能否同时满足两项，缺测不参与证明，低限按零至报告限区间",
+        "每档须达规定数量独立确证合格组；任一组确证不合格即报不合格，否则待补"
+      ],
+      "success": "样例整体不合格（含确证失败与待补陷阱），对照样例整体合格，非法输入返回 400 且不落库",
+      "failure": "重复盲码、未揭盲、混条件拼组、跨档或参照区间非法返回 400；不产生伪造验收结论",
+      "verification": "python3 -m permeance.check_flow acceptance",
+      "module_ids": [
+        "server",
+        "service",
+        "acceptance",
+        "artifacts",
+        "archive",
+        "result_table",
+        "version_panel"
       ]
     }
   ],

@@ -20,8 +20,8 @@ export function versionPanel(request, base) {
     if (selected) link.href = `${base}export/${selected}`;
   }
 
-  async function seal(source) {
-    const revision = await request('seal', source);
+  async function seal(source, route = 'seal') {
+    const revision = await request(route, source);
     const packet = await request(`packet/${revision.digest}`);
     return { revision, packet };
   }

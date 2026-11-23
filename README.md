@@ -18,9 +18,18 @@ python3 -m permeance.server
 python3 -m permeance.check_flow liquid
 python3 -m permeance.check_flow increment
 python3 -m permeance.check_flow export
+python3 -m permeance.check_flow acceptance
 ```
 
 这些命令在临时成果库和临时回环端口运行实际 HTTP 接口，分别核对样例、对照和拒绝路径。`examples` 保存业务示例及可人工核算的观测点。完整命令见 `.project-runtime.json`；自动化测试套件留置，不包含私有验收测试、缺陷任务或参考解答。
+
+### 盲样验收
+
+判断某组检测条件能否用于后续工业薄膜样品。工作台接收按盲码登记的锁定检测结果，以及验收时才提供的揭盲表（同源组、浓度档、参照区间）。同源重复读数只算一个独立组，换检测条件不与旧结果拼组；重复性按组内最大两两绝对差、参照核对按每条读数至参照区间的距离，各分“任意取值都合格／都不合格／部分合格”三态，联合结论按同一组真值能否同时满足两项判断。每个必查浓度档须达到规定数量的独立确证合格组，任一确证不合格即报不合格，否则待补。使用界面的「盲样验收样例」，或：
+
+```sh
+python3 -m permeance.check_flow acceptance
+```
 
 ### 扩展复核
 

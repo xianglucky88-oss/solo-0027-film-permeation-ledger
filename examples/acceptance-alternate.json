@@ -1,0 +1,37 @@
+{
+  "id": "盲验批次-乙",
+  "repeatability_limit": 2,
+  "locked": {
+    "results": [
+      { "code": "C01", "condition": "条件C2", "status": "measured", "value": 10.1 },
+      { "code": "C02", "condition": "条件C2", "status": "measured", "value": 10.9 },
+      { "code": "C03", "condition": "条件C2", "status": "measured", "value": 10.4 },
+      { "code": "C04", "condition": "条件C2", "status": "censored", "value": 8 },
+      { "code": "C05", "condition": "条件C2", "status": "censored", "value": 8 },
+      { "code": "C06", "condition": "条件C2", "status": "measured", "value": 9.6 },
+      { "code": "C07", "condition": "条件C2", "status": "measured", "value": 11.2 },
+      { "code": "C08", "condition": "条件C2", "status": "measured", "value": 50.3 },
+      { "code": "C09", "condition": "条件C2", "status": "measured", "value": 51.6 },
+      { "code": "C10", "condition": "条件C2", "status": "measured", "value": 50.9 }
+    ]
+  },
+  "unblinding": {
+    "version": "揭盲表-v2",
+    "levels": [
+      { "id": "低浓度档", "reference_lo": 9, "reference_hi": 12, "tolerance": 1, "required_groups": 2 },
+      { "id": "高浓度档", "reference_lo": 49, "reference_hi": 53, "tolerance": 1, "required_groups": 1 }
+    ],
+    "assignments": [
+      { "code": "C01", "group": "G1", "level": "低浓度档" },
+      { "code": "C02", "group": "G1", "level": "低浓度档" },
+      { "code": "C03", "group": "G1", "level": "低浓度档" },
+      { "code": "C04", "group": "G2", "level": "低浓度档" },
+      { "code": "C05", "group": "G2", "level": "低浓度档" },
+      { "code": "C06", "group": "G3", "level": "低浓度档" },
+      { "code": "C07", "group": "G3", "level": "低浓度档" },
+      { "code": "C08", "group": "H1", "level": "高浓度档" },
+      { "code": "C09", "group": "H1", "level": "高浓度档" },
+      { "code": "C10", "group": "H1", "level": "高浓度档" }
+    ]
+  }
+}

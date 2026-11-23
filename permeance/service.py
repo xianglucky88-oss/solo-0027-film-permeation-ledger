@@ -1,4 +1,4 @@
-from . import artifacts, domain, reconcile, rules
+from . import acceptance, artifacts, domain, reconcile, rules
 from .review import analyze_review
 from .contract import ContractError, ident, obj
 
@@ -20,11 +20,21 @@ class Workbench:
             outputs.update(analyze_review(review, model, compiled, outputs))
         return artifacts.make_packet(self.config['namespace'], source, outputs)
 
+    def analyze_acceptance(self, source):
+        source = obj(source, '盲样验收包')
+        ident(source.get('id'), '验收批次标识')
+        outputs = acceptance.analyze_acceptance(source)
+        return artifacts.make_packet(self.config['namespace'], source, outputs)
+
     def execute(self, command, body):
         if command == 'evaluate':
             return self.analyze(body)
+        if command == 'acceptance':
+            return self.analyze_acceptance(body)
         if command == 'seal':
             return self.archive.seal(self.analyze(body))
+        if command == 'acceptance-seal':
+            return self.archive.seal(self.analyze_acceptance(body))
         if command == 'compare':
             before = self.read(body.get('left'))
             after = self.read(body.get('right'))

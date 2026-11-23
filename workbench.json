@@ -190,6 +190,40 @@
         "evidence"
       ],
       "optional": true
+    },
+    {
+      "id": "acceptance_levels",
+      "label": "盲样验收浓度档",
+      "columns": [
+        "id",
+        "state",
+        "required",
+        "confirmed_pass",
+        "confirmed_fail",
+        "pending_groups",
+        "reference_range",
+        "tolerance"
+      ],
+      "optional": true
+    },
+    {
+      "id": "acceptance_groups",
+      "label": "盲样验收同源组",
+      "columns": [
+        "id",
+        "level",
+        "condition",
+        "state",
+        "repeatability",
+        "reference",
+        "joint",
+        "repeat_min",
+        "repeat_max",
+        "readings",
+        "missing",
+        "evidence"
+      ],
+      "optional": true
     }
   ],
   "values": {
@@ -233,7 +267,14 @@
     "unbalanced": "双端峰数不对称",
     "cycle": "完整循环",
     "sequence": "序列未闭合",
-    "marked": "有标记"
+    "marked": "有标记",
+    "pass": "任意取值都合格",
+    "fail": "任意取值都不合格",
+    "partial": "仅部分取值合格",
+    "insufficient": "读数不足无法证明",
+    "accepted": "确证合格",
+    "rejected": "确证不合格",
+    "pending": "待补"
   },
   "columns": {
     "added": "补液体积",
@@ -280,7 +321,26 @@
     "mixed": "双因禁保长度",
     "eligible": "可保长度",
     "blocked": "重大疵点长度",
-    "blind": "缺检长度"
+    "blind": "缺检长度",
+    "code": "盲码",
+    "condition": "检测条件",
+    "level": "浓度档",
+    "group": "同源组",
+    "repeatability": "重复性判定",
+    "reference": "参照核对判定",
+    "reference_range": "参照区间",
+    "joint": "联合判定",
+    "repeat_min": "最小可能极差",
+    "repeat_max": "最大可能极差",
+    "readings": "组内读数",
+    "missing": "缺测盲码",
+    "required": "要求合格组数",
+    "confirmed_pass": "确证合格组",
+    "confirmed_fail": "确证不合格组",
+    "pending_groups": "待补组",
+    "tolerance": "参照允差",
+    "report_limit": "报告限",
+    "participates": "参与证明"
   },
   "reconciliation": "increment",
   "defaultOperation": "mass"
