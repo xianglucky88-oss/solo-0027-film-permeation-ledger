@@ -1,0 +1,192 @@
+{
+  "id": "母卷-甲",
+  "limit": 15,
+  "cutoff": 40,
+  "required_points": [10, 20, 30, 40],
+  "min_pass": 1,
+  "extra_points": [
+    {"piece": "中区-乙片", "points": [25]}
+  ],
+  "zones": [
+    {
+      "id": "左区",
+      "pieces": [
+        {
+          "id": "左区-甲片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.2, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "左区-乙片",
+          "test_start": 120,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 4, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.5, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "左区-缺片",
+          "test_start": 240
+        }
+      ]
+    },
+    {
+      "id": "中区",
+      "pieces": [
+        {
+          "id": "中区-甲片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "missing", "removed": 1, "added": 1},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.2, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "中区-乙片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 25, "status": "measured", "value": 2.6, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样五", "time": 40, "status": "measured", "value": 3.2, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "中区-丙片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.2, "removed": 0, "added": 0}
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "右区",
+      "pieces": [
+        {
+          "id": "右区-甲片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "missing", "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.2, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "右区-乙片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "censored", "value": 4.2, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 2.8, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.5, "removed": 0, "added": 0}
+            ]
+          }
+        },
+        {
+          "id": "右区-丙片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1},
+              {"id": "空白三", "time": 40, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "measured", "value": 2, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0},
+              {"id": "取样三", "time": 30, "status": "measured", "value": 4, "removed": 0, "added": 0},
+              {"id": "取样四", "time": 40, "status": "measured", "value": 3.5, "removed": 0, "added": 0}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

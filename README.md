@@ -25,3 +25,13 @@ python3 -m permeance.check_flow export
 ### 扩展复核
 
 使用「复核样例」，随后在「扩展复核」切换各项结果。有效输入见 `examples/review-sample.json` 与 `examples/review-alternate.json`。例如运行 `python3 -m permeance.check_flow windows` 可核对派生结果、拒绝非法复核和基础版本兼容性。
+
+### 整卷批次判定
+
+使用「整卷批次」按开试前登记的分区和样片清单做批次审结。登记须给出共用的单位面积透过限值、从各片试验起点计算的必测时点、判断截止时点和每区最少合格片数。逐片以累积质量区间为证：截止前任一样点下界到限即未通过；截止内每个必测点有证且所有可用样点（含额外实测点）上界严格低于限值才合格；缺片、缺点、无可信区间或区间跨限一律计入未定并指明阻断来源。每区分别报最少与最多可能合格片数，任一区上界不达标整卷拒收，所有区下界达标才放行，否则待补证。
+
+```sh
+python3 -m permeance.check_flow roll
+```
+
+该检查同时核对两种交接情形：两卷总合格片数相同但只有一卷每区都够；某片末次有证且低于限值，却因中间缺测或曾经有证到限而不能计作合格。有效登记见 `examples/roll-sample.json` 与 `examples/roll-alternate.json`，非法登记见 `examples/roll-reject.json`。

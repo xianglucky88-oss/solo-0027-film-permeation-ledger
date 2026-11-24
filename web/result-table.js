@@ -10,6 +10,13 @@ function el(tag, text, cls) {
 function viewValue(value, model) {
   if (value === null || value === undefined) return '—';
   if (Array.isArray(value)) return value.length ? value.map((part) => viewValue(part, model)).join('、') : '—';
+  if (typeof value === 'object') {
+    if (value.reason) {
+      const target = value.sample ? `${value.sample} ` : '';
+      return `${target}${model.values[value.reason] || value.reason}`;
+    }
+    return String(value);
+  }
   if (typeof value === 'number') return new Intl.NumberFormat('zh-CN', { maximumFractionDigits: 5 }).format(value);
   return model.values[value] || String(value);
 }

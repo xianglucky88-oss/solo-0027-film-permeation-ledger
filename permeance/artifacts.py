@@ -25,7 +25,7 @@ def verify_packet(packet):
 def rows_for(packet, operation):
     outputs = packet['outputs']
     key = operation['id']
-    return outputs.get(key, []) if operation.get('optional') else outputs[key]
+    return outputs.get(key, []) if operation.get('optional') or operation.get('roll') else outputs[key]
 
 
 def compare(left, right, operations):

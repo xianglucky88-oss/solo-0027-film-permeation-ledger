@@ -7,6 +7,8 @@ const base = document.body.dataset.prefix;
 let model, packet, mode;
 let busy = false;
 
+const isRoll = (next) => Boolean(next && next.kind === 'roll_batch');
+
 async function request(path, data) {
   const options = data === undefined ? {} : {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
@@ -22,7 +24,7 @@ function note(text, kind = '') {
   $('status').dataset.kind = kind;
 }
 
-const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button');
+const stageButtons = () => document.querySelectorAll('#stages button, #review-stages button, #roll-stages button');
 
 function renderOperation(next) {
   mode = next;
@@ -34,13 +36,18 @@ function renderOperation(next) {
 
 function show(next) {
   packet = next;
+  const roll = isRoll(next);
   $('subject').textContent = next.subject;
   $('digest').textContent = next.digest.slice(0, 12);
-  draw($('visual'), next, model);
-  const review = Object.hasOwn(next.source, 'review');
-  $('review-pane').hidden = !review;
-  if (!review) $('review-pane').open = false;
-  renderOperation(Object.hasOwn(next.outputs, mode) ? mode : model.defaultOperation);
+  $('visual').hidden = roll;
+  if (!roll) draw($('visual'), next, model);
+  $('review-pane').hidden = roll || !Object.hasOwn(next.source, 'review');
+  if (!roll && !Object.hasOwn(next.source, 'review')) $('review-pane').open = false;
+  $('roll-pane').hidden = !roll;
+  const available = model.operations.filter((op) => roll === Boolean(op.roll));
+  const preferred = roll ? 'pieces' : model.defaultOperation;
+  renderOperation(Object.hasOwn(next.outputs, mode) && available.some((op) => op.id === mode)
+    ? mode : preferred);
 }
 
 function source() {
@@ -67,14 +74,16 @@ async function guarded(action) {
 
 async function choose(path) {
   const data = await request(path);
-  const next = await request('evaluate', data);
+  const command = path.startsWith('roll-') ? 'adjudicate' : 'evaluate';
+  const next = await request(command, data);
   $('source').value = JSON.stringify(data, null, 2);
   show(next);
   if (path === 'review-sample') {
     $('review-pane').open = true;
     renderOperation(model.operations.find((op) => op.optional).id);
   }
-  note(({ sample:'样例已处理', alternate:'对照样例已处理', 'review-sample':'复核样例已处理' })[path]);
+  note(({ sample: '样例已处理', alternate: '对照样例已处理', 'review-sample': '复核样例已处理',
+    'roll-sample': '整卷批次已按登记审结', 'roll-alternate': '对照整卷已审结' })[path]);
 }
 
 function bind(id, action, event = 'click') {
@@ -89,25 +98,34 @@ guarded(async () => {
     button.textContent = spec.label;
     button.dataset.mode = spec.id;
     button.addEventListener('click', () => packet && renderOperation(spec.id));
-    $(spec.optional ? 'review-stages' : 'stages').append(button);
+    if (spec.roll) $('roll-stages').append(button);
+    else $(spec.optional ? 'review-stages' : 'stages').append(button);
   }
   bind('sample', () => choose('sample'));
   bind('review-sample', () => choose('review-sample'));
   bind('alternate', () => choose('alternate'));
+  bind('roll-sample', () => choose('roll-sample'));
+  bind('roll-adjudicate', async () => {
+    show(await request('adjudicate', source()));
+    note('整卷批次已按开试前登记审结');
+  });
   bind('evaluate', async () => {
-    show(await request('evaluate', source()));
-    note('已完成数据归约');
+    const data = source();
+    show(await request(Array.isArray(data.zones) ? 'adjudicate' : 'evaluate', data));
+    note(Array.isArray(data.zones) ? '整卷批次已重新审结' : '已完成数据归约');
   });
   bind('upload', async () => {
     const file = $('upload').files[0];
     if (!file) return;
     if (file.size > 512 * 1024) throw new Error('数据包大于 512 KiB');
     $('source-pane').open = true;
-    $('source').value = await file.text();
-    show(await request('evaluate', source()));
+    const data = JSON.parse(await file.text());
+    $('source').value = JSON.stringify(data, null, 2);
+    show(await request(Array.isArray(data.zones) ? 'adjudicate' : 'evaluate', data));
     note('文件已导入并处理');
   }, 'change');
   bind('seal', async () => {
+    if (isRoll(packet)) throw new Error('整卷批次为只读审结结论，不走单试片封存库');
     const { revision: result, packet: saved } = await versions.seal(source());
     show(saved);
     await versions.refresh(result.digest);

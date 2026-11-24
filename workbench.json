@@ -190,6 +190,51 @@
         "evidence"
       ],
       "optional": true
+    },
+    {
+      "id": "roll",
+      "label": "整卷批次判定",
+      "columns": [
+        "id",
+        "state",
+        "limit",
+        "cutoff",
+        "total_pass",
+        "total_registered",
+        "blockers"
+      ],
+      "roll": true
+    },
+    {
+      "id": "zones",
+      "label": "分区合格区间",
+      "columns": [
+        "id",
+        "state",
+        "registered",
+        "pass_count",
+        "fail_count",
+        "undetermined_count",
+        "min_possible",
+        "max_possible",
+        "required_pass"
+      ],
+      "roll": true
+    },
+    {
+      "id": "pieces",
+      "label": "样片审结",
+      "columns": [
+        "id",
+        "zone",
+        "state",
+        "test_start",
+        "time",
+        "lo",
+        "hi",
+        "blockers"
+      ],
+      "roll": true
     }
   ],
   "values": {
@@ -233,7 +278,17 @@
     "unbalanced": "双端峰数不对称",
     "cycle": "完整循环",
     "sequence": "序列未闭合",
-    "marked": "有标记"
+    "marked": "有标记",
+    "pass": "合格",
+    "fail": "未通过",
+    "undetermined": "未定",
+    "release": "整卷放行",
+    "reject": "整卷拒收",
+    "pending": "待补证",
+    "missing_piece": "缺片",
+    "missing_required": "缺点",
+    "untrusted_point": "无可信区间",
+    "crossing_interval": "区间跨限"
   },
   "columns": {
     "added": "补液体积",
@@ -280,7 +335,27 @@
     "mixed": "双因禁保长度",
     "eligible": "可保长度",
     "blocked": "重大疵点长度",
-    "blind": "缺检长度"
+    "blind": "缺检长度",
+    "zone": "分区",
+    "limit": "共用限值",
+    "cutoff": "截止时点",
+    "required_points": "必测时点",
+    "min_pass": "每区最少合格",
+    "test_start": "试验起点",
+    "blockers": "阻断明细",
+    "registered": "登记片数",
+    "pass_count": "已证合格",
+    "fail_count": "已证未通过",
+    "undetermined_count": "未定片数",
+    "min_possible": "最少可能合格",
+    "max_possible": "最多可能合格",
+    "required_pass": "最少合格要求",
+    "total_pass": "全卷合格片数",
+    "total_registered": "全卷登记片数",
+    "reason": "阻断原因",
+    "detail": "说明",
+    "sample_ref": "取样编号",
+    "offset": "相对时点"
   },
   "reconciliation": "increment",
   "defaultOperation": "mass"

@@ -25,6 +25,7 @@
 | 队列复测 | `POST /permeance/api/evaluate 的 outputs.revisit` | 取样五 的 状态 为 "unresolved" |
 | 区段净增量 | `POST /permeance/api/evaluate 的 outputs.increment` | 取样四/取样五 的 状态 为 "blind" |
 | 平行版本差分 | `POST /permeance/api/compare` | 异版产生差异，同版无差异，跨对象拒绝 |
+| 整卷批次判定 | `POST /permeance/api/adjudicate 的 outputs.roll/zones/pieces` | 右区 状态 为 "pending"；右区-乙片 阻断原因为 "crossing_interval" |
 | 封存版本 | `POST /permeance/api/seal` | 同输入仅写入一次，旧版不随对照改变 |
 | 导出交接 | `GET /permeance/api/export/<摘要>` | 下载头有效且内容完整保留历史快照 |
 
@@ -33,6 +34,7 @@
 - `permeance/contract.py`：JSON 与领域字段边界。
 - `permeance/domain.py`：解析领域单位与归约事实。
 - `permeance/rules.py`：消费归约证据和约束，产生业务判定。
+- `permeance/roll.py`：开试前登记的分区与样片清单校验，逐片与整卷批次判定。
 - `permeance/artifacts.py`：成果规范编码、摘要与差分。
 - `permeance/archive.py`：SQLite 历史版本与原子封存。
 - `permeance/service.py`：串联归约、比对和历史读取。
@@ -41,6 +43,20 @@
 - `permeance/reconcile.py`：联合原始归约事实与业务判定，推导区段净增量。
 
 浏览器显示来源和判定结果；发布决定由服务端归约。自动化测试套件留置。每条工作流的有界核对命令见 `.project-runtime.json`。
+
+## 整卷批次判定
+
+一卷薄膜按开试前登记分左、中、右等分区，每区登记样片清单。一卷的合格均值不能用另一区的合格片顶掉某区的失败片，因此判定以**分区**为单位，整卷结论只由各区的最少与最多可能合格片数推出。
+
+登记在开试前固定，顶层 `POST /permeance/api/adjudicate` 接收并校验：全卷共用的单位面积透过限值 `limit`、判断截止时点 `cutoff`、从各片自己的试验起点计算的必测时点 `required_points`（均不晚于截止）、每区最少合格片数 `min_pass`，以及 `zones` 内每片一次登记试验。同一片只允许开试前登记的那次试验，输入里的试验不得自带 `id` 或限值（限值以整卷登记为准），也不接受后来表现更好的替换试验。登记里声明的 `extra_points` 额外实测点同样参与审结。
+
+判定只消费现有校正并计入抽液后的**累积质量区间**（复用 `domain` 与 `rules` 归约），不在两次取样之间插值，也不把截止以后才取得的样点倒填：
+
+- **确认未通过（fail）**：截止时点及以前的任一实际样点，其可信区间下界达到限值（`lo >= limit`）。末次有证且低于限值，不能抹掉早先一次有证到限。
+- **确认合格（pass）**：截止以内每个必测点都有对应取样且有可信区间，并且这段期间所有可用样点（含落在截止前的额外实测点）的上界都严格低于限值。额外点已登记但无对应取样或无可信区间，同样不能报通过。
+- **未定（undetermined）**：缺片、必测点缺证、截止前样点无可信区间（含早先抽液带走未知质量造成的下游盲区）、或区间跨限（上界到限而下界未到限）。每条阻断都指明是哪片、哪次取样（`sample`）、哪个相对时点（`offset`）或哪笔早先抽液（`evidence`）。
+
+`outputs` 给三层结果：`roll`（整卷）、`zones`（每区登记数、已证合格/未通过/未定数，以及最少可能 `min_possible` 与最多可能 `max_possible` 合格片数）、`pieces`（逐片结论与阻断明细）。任何一区连上界都不达标（`max_possible < min_pass`）则整卷 `reject`；所有区下界均达标（`min_possible >= min_pass`）才 `release`；其余情形 `pending` 待补证。`examples/roll-sample.json`、`roll-alternate.json` 给出两种交接情形（总合格片数相同但只有一卷每区都够；末次合格却因中间缺测或曾经到限不能计合格），`roll-reject.json` 是应被 400 阻止的非法登记。
 
 ## 扩展复核
 

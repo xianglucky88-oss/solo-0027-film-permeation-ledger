@@ -36,6 +36,49 @@ def observe(rows, row_id, field, target):
         raise ValueError(f'{row_id}.{field} 为 {actual!r}，应为 {target!r}')
 
 
+def roll_audit(port):
+    sample = request(port, 'roll-sample')[0]
+    alternate = request(port, 'roll-alternate')[0]
+    bad = json.loads((ROOT/'examples'/'roll-reject.json').read_text(encoding='utf8'))
+    request(port, 'adjudicate', bad, status=400)
+    first = request(port, 'adjudicate', sample)[0]
+    second = request(port, 'adjudicate', alternate)[0]
+
+    roll_a, roll_b = first['outputs']['roll'], second['outputs']['roll']
+    if roll_a['state'] != 'pending' or roll_b['state'] != 'release':
+        raise ValueError('整卷放行口径错误：只有每区下界达标的卷才能放行')
+    if roll_a['total_pass'] != roll_b['total_pass'] or roll_a['total_pass'] != 3:
+        raise ValueError('交接情形一需要两卷总合格片数相同')
+    zones_a, zones_b = ({z['id']: z for z in packet['outputs']['zones']}
+                        for packet in (first, second))
+    if not all(z['state'] == 'release' for z in zones_b.values()):
+        raise ValueError('对照卷应每个分区都达到最少合格片数')
+    if all(z['state'] == 'release' for z in zones_a.values()):
+        raise ValueError('样例卷存在不达标分区，不应整卷放行')
+    if zones_a['右区']['min_possible'] != 0 or zones_a['右区']['max_possible'] != 2:
+        raise ValueError('分区最少/最多可能合格片数口径错误')
+    if zones_a['右区']['state'] != 'pending' or zones_b['右区']['state'] != 'release':
+        raise ValueError('上界不达标应拒收、下界达标才放行的边界错误')
+
+    pieces = {p['id']: p for p in first['outputs']['pieces']}
+    blocked = pieces['右区-乙片']
+    if blocked['state'] != 'undetermined' or not any(b['reason'] == 'crossing_interval' for b in blocked['blockers']):
+        raise ValueError('交接情形二：末次有证且低于限值但曾有证到限，不能计作合格')
+    if blocked['hi'] is None or blocked['lo'] is None:
+        raise ValueError('未定片仍应保留判定时点的区间证据')
+    if pieces['左区-缺片']['state'] != 'undetermined' or \
+            pieces['左区-缺片']['blockers'][0]['reason'] != 'missing_piece':
+        raise ValueError('缺片必须计入未定并指明片号')
+    carried = pieces['中区-甲片']
+    if carried['state'] != 'undetermined' or \
+            not any(b['reason'] == 'missing_required' for b in carried['blockers']):
+        raise ValueError('早先抽液造成的下游盲区应阻断必测点审结')
+    if any(p['state'] == 'pass' and p['blockers'] for p in pieces.values()):
+        raise ValueError('合格片不得携带未结清的阻断项')
+    if first['digest'] != request(port, 'adjudicate', sample)[0]['digest']:
+        raise ValueError('相同登记应得到确定性一致的成果摘要')
+
+
 def audit(port, flow):
     review = any(op['id'] == flow and op.get('optional') for op in CONFIG['operations'])
     prefix = 'review-' if review else ''
@@ -94,14 +137,18 @@ def audit(port, flow):
 
 def main():
     parser = argparse.ArgumentParser(description='运行有界的生产工作流检查')
-    parser.add_argument('flow', choices=[op['id'] for op in CONFIG['operations']]+['seal','compare','export'])
+    choices = [op['id'] for op in CONFIG['operations']] + ['seal', 'compare', 'export']
+    parser.add_argument('flow', choices=choices)
     args = parser.parse_args()
     with TemporaryDirectory(prefix=CONFIG['namespace']+'-') as directory:
         with serve(Path(directory)/'observations.sqlite', 0) as server:
             thread = Thread(target=server.serve_forever, daemon=True)
             thread.start()
             try:
-                audit(server.server_port,args.flow)
+                if args.flow == 'roll':
+                    roll_audit(server.server_port)
+                else:
+                    audit(server.server_port, args.flow)
             finally:
                 server.shutdown()
                 thread.join()

@@ -18,6 +18,11 @@
       "responsibility": "消费归约证据和约束，产生业务判定"
     },
     {
+      "id": "roll",
+      "path": "permeance/roll.py",
+      "responsibility": "开试前登记的分区样片清单校验与逐片、整卷批次判定"
+    },
+    {
       "id": "artifacts",
       "path": "permeance/artifacts.py",
       "responsibility": "成果规范编码、摘要与差分"
@@ -496,6 +501,31 @@
         "domain",
         "rules",
         "review",
+        "artifacts",
+        "result_table",
+        "blank_correction",
+        "mass_ledger"
+      ]
+    },
+    {
+      "id": "roll",
+      "name": "整卷批次判定",
+      "entry": "POST /permeance/api/adjudicate → outputs.roll/zones/pieces",
+      "steps": [
+        "按开试前登记的分区、样片清单、共用限值、必测时点、截止时点和每区最少合格片数审结",
+        "截止前任一可信样点下界到限即未通过；必测点逐点有证且截止内所有可用样点上界严格低于限值才合格",
+        "缺片、缺点、无可信区间、区间跨限计入未定并指明片号、取样或早先抽液；不插值、不倒填截止后样点",
+        "每区报最少与最多可能合格片数：任一区上界不达标整卷拒收，所有区下界达标才放行，否则待补证"
+      ],
+      "success": "两卷总合格片数相同但只有每区都够的一卷放行；末次合格却曾有证到限或中间缺测的片不计合格",
+      "failure": "登记域内冲突或试验非法返回 400；不产生伪造结论",
+      "verification": "python3 -m permeance.check_flow roll",
+      "module_ids": [
+        "server",
+        "service",
+        "roll",
+        "domain",
+        "rules",
         "artifacts",
         "result_table",
         "blank_correction",

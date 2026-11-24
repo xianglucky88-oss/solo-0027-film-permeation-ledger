@@ -1,0 +1,31 @@
+{
+  "id": "母卷-废",
+  "limit": 15,
+  "cutoff": 40,
+  "required_points": [10, 20, 30, 40],
+  "min_pass": 1,
+  "zones": [
+    {
+      "id": "左区",
+      "pieces": [
+        {
+          "id": "左区-坏片",
+          "test_start": 0,
+          "trial": {
+            "initial_ml": 10,
+            "area": 2,
+            "max_blank_gap": 20,
+            "blanks": [
+              {"id": "零点", "time": 0, "value": 1},
+              {"id": "空白二", "time": 20, "value": 1}
+            ],
+            "samples": [
+              {"id": "取样一", "time": 10, "status": "censored", "value": 0, "removed": 0, "added": 0},
+              {"id": "取样二", "time": 20, "status": "measured", "value": 2.4, "removed": 0, "added": 0}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
